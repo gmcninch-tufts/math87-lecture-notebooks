@@ -12,15 +12,18 @@ jupyter:
     language: python
     name: python3
 ---
-{{{abstract}}}
+
+Math087 - Mathematical Modeling
+===============================
+[Tufts University](http://www.tufts.edu) -- [Department of Math](http://math.tufts.edu)  
+[George McNinch](http://gmcninch.math.tufts.edu) <george.mcninch@tufts.edu>  
+*Fall 2020*
+
+Course material (Week 1): Optimization
+--------------------------------------
 <!-- #region -->
-
-# Optimization -- Week 1
-
-<!-- #region -->
-# Optimization (overview)
-
----
+Some generalities
+-----------------
 Optimization is the most common application of mathematics. Here are some “real-world” examples:
 
 - **Business optimization**. A business manager attempts to understand and control parameters in order to maximize profit and minimize costs.
@@ -51,7 +54,7 @@ In this first part of our modeling course, we are going to discuss some sorts of
 
 In this first section of our modeling class, we are going to examine a few *single variable* optimization problems. In some sense, these amount of complicated versions of *word problems* that you might have met in Calculus I (differential calculus).
 
-The calculus based solution can then be described roughly as follows: 
+The procedure to carry out a calculus based solution can then be described roughly as follows: 
 
 - find the function \\(f(x)\\) that measures the quantity that you desire to optimize, and the relevant interval \\([a,b]\\) of values of independent variable \\(x\\). 
 - find the critical points \\(c_1,c_2,\dots,c_N\\) of \\(f\\) in the interval \\((a,b)\\).
@@ -71,10 +74,11 @@ The calculus based solution can then be described roughly as follows:
 > fine of \\$10,000 per day for each day in which any part of the
 > shoreline remains uncleaned.
 
-*(Let's assume that the fine depends on fractional days, so that
-e.g. if the work is completed in 15.5 days, the company would pay a
-fine of \\(\dfrac{3}{2}\cdot 10000 = 15000.\\) I'll comment on this
-again below)*
+Let's assume that the fine depends on fractional days. For example,
+if the work is completed in 15.5 days, we'll suppose that the company would pay a
+fine of 
+
+$$1.5 \cdot 10000 = 15000.$$
 
 > Cleanup crews can be hired, and each crew cleans 5 miles of beach per week.
 > 
@@ -129,36 +133,45 @@ fine is given by the indicated formula)
 	
 Now let's give `python` code for computing these quantities.
 
+
 Note that we use the parameter values as *default values* for some of the arguments
 of the *crew_cost* and *cost* functions.
 <!-- #endregion -->
 
-```python
-def time(n,miles,cleanup_rate): 
-    # time in days required for cleanup 
-    # by *n* *non-local* cleanup crews 
-    #  (together with the one local crew)
-    # of *miles* of shoreline, 
-    # where each crew works at the indicated cleanup-rate
-    return miles/((n+1)*cleanup_rate)
+```python jupyter={"outputs_hidden": false}
+class OilSpillCleanup:
+    def __init__(self,cleanup_rate=5.0/7,tc=18000,miles=200,fine_per_day=10000):
+        self.miles = miles                
+        self.cleanup_rate = cleanup_rate   
+        self.tc = tc                      
+        self.fine_per_day = fine_per_day
+       
+    def report_parameters(self):
+        lines = [f"> miles to clean :   {self.miles}",
+                 f"> cleanup_rate   :   {self.cleanup_rate:.2f} (miles/day)/crew",
+                 f"> transport costs: $ {self.tc:,d} per external crew",
+                 f"> fine per day   : $ {self.fine_per_day:,d} per day",]
+        return "\n".join(lines) + "\n"
+                
+    def time(self,n): 
+        # time to clean the shoreline if n external crews are hired
+        return self.miles/((n+1)*self.cleanup_rate)
 
-def F(t,fine_per_day): 
-    # The total fine imposed. Depends on:
-    # t = # of days for complete cleanup, and 
-    # fine = daily fine imposed. 
-    return 0 if (t<14) else fine_per_day*(t-14)
+    def fine(self,t): 
+        # The total fine imposed. Depends on:
+        # t = # of days for complete cleanup 
+        return 0 if (t<14) else self.fine_per_day*(t-14)
 
-def crew_cost(n,miles=200,cleanup_rate=5.0/7,tc=18000):
-    # cost in payments to crews. Depends on
-    # n = number of non-local crews hired
-    # cleanup_rate, and 
-    # tc_rate = travel costs per non-local crew
-    t=time(n,miles,cleanup_rate)
-    return 500*t + 800*t*n + tc*n
+    def crew_costs(self,n):
+        # cost in payments to crews. Depends on
+        # n = number of non-local crews hired
+        t=self.time(n) # time for cleanup
+        return 500*t + 800*t*n + self.tc*n
 
-def cost(n,fine_per_day=10000,miles=200,cleanup_rate=5.0/7,tc=18000):
-    t=time(n,miles,cleanup_rate)
-    return F(t,fine_per_day) + crew_cost(n,miles,cleanup_rate,tc) 
+    def cost(self,n):
+        # total expenses incurred for hire of n external crews
+        t=self.time(n)
+        return self.fine(t) + self.crew_costs(n) 
 ```
 
 ### Let's first just make a table of results
@@ -173,7 +186,7 @@ module](https://pandas.pydata.org/docs/index.html).  We'll use the
 for which the keys are the column headers and the values are the
 column data).
 
-```python
+```python jupyter={"outputs_hidden": false}
 import pandas as pd
 
 ## The following overrides the usual display formatting of floating point numbers. 
@@ -182,24 +195,26 @@ import pandas as pd
 pd.set_option('display.float_format', lambda x: "{:,.2f}".format(x))
 ```
 
-```python
-def oil_spill_costs(crew_range   = range(0,25),
-                    miles        = 200,
-                    fine_per_day = 10000,
-                    cleanup_rate = 5.0/7,
-                    tc=18000):
+```python jupyter={"outputs_hidden": false}
+# define an instance of the cleanup class, with the default arguments.
+c = OilSpillCleanup()
+
+# and define a function of two arguments:
+# c, a class of type cleanup, and
+# crew_range, a list of integers, to be used as the "number of external crews hired"
+#             crew_range defaults to the list [0,1,...,24]
+#
+def oil_spill_costs(c, crew_range=range(0,25)):
     return pd.DataFrame(
-            {'#crews' : crew_range,
-             'cost'   : map( lambda n: cost(n,fine_per_day,miles,cleanup_rate,tc) , crew_range),
-             'days'   : map( lambda n: time(n,miles,cleanup_rate)                 , crew_range),
-             'fine'   : map( lambda n: F(time(n,miles,cleanup_rate),fine_per_day) , crew_range)
+            {'#external crews'      : crew_range,
+             'cost'   : map( lambda n: c.cost(n) , crew_range),
+             'days'   : map( lambda n: c.time(n) , crew_range),
+             'fine'   : map( lambda n: c.fine(n) , crew_range)
             },
             index=crew_range)
     
-```
 
-```python
-oil_spill_costs()  ## Compute use the *default* parameter values.
+oil_spill_costs(c)  ## Compute use the *default* parameter values.
 ```
 
 We can of course just scan the columns with our eyes to see where the costs are minimized. But we can also use *pandas* API-functions.
@@ -207,10 +222,25 @@ We can of course just scan the columns with our eyes to see where the costs are 
 In the terminology of *pandas*, we'll extract the *costs* column `df['cost']` of the "dataframe" `df` as a *series*, and then use the `idxmin` method to find the *index* `j` at which the costs are minimized.
 Finally, the loc property of `df` allows to select the data `df.loc[j]` in the row with index label `j`.
 
-```python
-df = oil_spill_costs()
+```python jupyter={"outputs_hidden": false}
+def minimize_costs(c,crew_range=range(0,25)):
+    ## make the data-frame 
+    costs_df = oil_spill_costs(c,crew_range) 
+    ## find the index of the data-frame entry with minimal costs
+    min_index = costs_df['cost'].idxmin()
+    ## return the corresponding data-frame entry  
+    return costs_df.loc[min_index]    
 
-df.loc[ df['cost'].idxmin() ]
+def report_minimal_costs(c,crew_range=range(0,25)):
+    r = minimize_costs(c,crew_range)
+    return "\n".join([f"For n in {crew_range}, and with these parameters:",
+                      "",
+                      c.report_parameters(),
+                      f"the total costs are minimized by hiring n = {r['#external crews']} external crews.",
+                      "Here are the details:",
+                      "",
+                      str(r)]) + "\n"
+
 ```
 
 ### <a id='minimal_cost_cell'> Minimal costs (for basic parameters)</a>
@@ -219,26 +249,34 @@ From the preceding calculation, it appears that the cost is minimized by hiring 
 
 Below, we'll use some calculus to confirm this observation!!!
 
-But first, notice that it is easy to change parameters. For example, let's see what would happen if the fine were doubled and if instead 250 miles of coast were contaminated.
-
 ```python
-df=oil_spill_costs(miles=250,fine_per_day=20000)
-
-df.loc[ df['cost'].idxmin() ]
+## c is the class obtained above via OilSpillCleanup()
+##
+print(report_minimal_costs(c))
 ```
 
-And here is what happens if the crews are actually able to clean up the beach at a rate of 1 mile/day, instead:
+Before talking about the calculus, let's observe that it is easy to look for minimal costs with other parameters. With this code, we need to be careful that the range of crew sizes the code considers is large enough, though. 
 
-```python
-df=oil_spill_costs(cleanup_rate=1.0)
+Consider the following example:
 
-df.loc[ df['cost'].idxmin() ]
+```python jupyter={"outputs_hidden": false}
+## make a new instance of our cleanup class, with some different parameters
+
+c1 = OilSpillCleanup(miles=300,fine_per_day=20000,tc=15000,cleanup_rate=.5)
+
+## and look for minimal costs, first with the default range of n's, and then with a slightly bigger range:
+
+print(report_minimal_costs(c1))
+print("-----------------------")
+print(report_minimal_costs(c1,crew_range=range(0,35)))
+
+## Notice! We wouldn't have seen the minimum if we had used the default crew_range...
 ```
 
-<!-- #region -->
+-----
 ## <a id="calculus_cell">Applying calculus to the problem</a>
 
-We are going to do our analysis with the "default" values \\(m = 5.0/7\\), \\(TC=18000\\), \\(f=10000\\), for 200 miles of coast.
+Our computations so far *suggest* - but don't *confirm* - the optimal number of crews to hire to minimize costs. We are going to use calculus to confirm this number for our "default" parameter values \\(m = 5.0/7\\), \\(TC=18000\\), \\(f=10000\\), for 200 miles of coast.
 
 Recall the formulas:
 
@@ -252,7 +290,7 @@ Recall the formulas:
 
 \\(C_{tot}\\) is expressed here as a function of both \\(t\\) and \\(n\\). But of course, \\(t\\) is determined by \\(n\\).
 
-We want to express \\(C_{tot}\\) as a function only of \\(n\\). Of course, the obstacle here is that the fine \\(F\\) is not expressed directly as a function of \\(n\\), and the best way to deal with this is to consider different cases.
+We want to express \\(C_{tot}\\) as a function only of \\(n\\). The obstacle here is that the fine \\(F\\) is not expressed directly as a function of \\(n\\), and the best way to deal with this is to consider different cases.
 
 We first ask the question: "how many crews would we need if we were to clean
 everything up in exactly 14 days?"
@@ -274,173 +312,267 @@ given by the function:
 And, the total cost function is given as a function of \\(n\\) by:
 \\[C_{tot}(n) =  \left \{ \begin{matrix} F(n) + C_{crew}(n) & n < 19 \\ C_{crew}(n) & n \ge 19\end{matrix} \right .\\] 
 
+We now pause to use `python` to draw some graphs.
 
-Of course, in python we find these functions as follows:
+<!-- #region jupyter={"outputs_hidden": false} -->
 
-* `fine(n)   = f(time(n,miles=200,cleanup_rate=5.0/7),fine_per_day=10000)`
-* `c_crew(n) = crew_cost(n,miles=200,cleanup_rate=5.0/7,tc=18000)`
-* `c_tot(n)  = c_crew(n) + fine(n)`
+Of course, in python we find these functions using methods of the class `c = cleanup()` as follows:
+
+* $F(n)   \leftrightarrow$  `c.fine(c.time(n))`
+* $C_{crew}(n) \leftrightarrow $ `c.crew_cost(n)`
+* $C_{tot}(n) \leftrightarrow $ `c.cost(n)`
+<!-- #endregion -->
+
+Graphs
+------
+
+For a specified class `c` of `OilSpillCleanup`, we can use python's [matplotlib](https://matplotlib.org/) package to draw graphs of the functions
+`c.cost(n)` and `c.fine(c.time(n))` viewed as functions of `n`.
+
+
+```python jupyter={"outputs_hidden": false}
+c = OilSpillCleanup()   ### the class with the default values
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+def create_graph(c, crew_min=2, crew_max=30, mesh=200, vlines = []):
+    x = np.linspace(crew_min,crew_max,mesh)
+        
+    fig, ax = plt.subplots(figsize=(12,6))  
+    ax.plot(x,np.array([c.cost(n) for n in x]),label="C_tot(n)")
+    ax.plot(x,np.array([c.fine(c.time(n))  for n in x]),label="Fine(n)")
+
+    ax.set_xlabel("# crews")
+    ax.set_ylabel("total cost in $")
+    ax.legend()
+
+    for t in vlines:
+        ax.axvline(x=t, color="red", dashes=[1,4])
+
+    ax.set_title("Cleanup costs")
+    return fig
+
+gg=create_graph(c)
+##
+## if you not in a notebook, you should now call gg.show() in order to *see* the graph...
+##
+```
+
+<!-- #region -->
+The interval $(19,\infty)$
+--------------------------
+
+Our computations strongly *suggest* that the costs are not minimized by taking $n$ in the interval $(19,\infty)$. Let's start our analysis by confirming this fact so that we can then focus on the cost function for $0 \le n \le 19$.
+
+For $n \ge 19$, recall that
+$$C_{tot}(n) = C_{crew}(n) = \dfrac{a}{n+1} + \dfrac{b\cdot n}{n+1} + cn$$
+for constants $a,b,c$ given by $a = 500\cdot 280$, $b = 800 \cdot 280$ and $c = 18000$.
+
+Differentiating in $n$, find that
+$$(\clubsuit) \quad \dfrac{dC_{tot}}{dn} = c + \dfrac{b}{(n+1)^2} - \dfrac{a}{(n+1)^2}$$
+since $\dfrac{d}{dn}\left[\dfrac{n}{n+1} \right] = \dfrac{1}{(1+n)^2} $.
+
+For $n \ge 19$ notice that:
+$$\dfrac{a}{(n+1)^2} \le \dfrac{a}{20^2} = 350.$$
+Since $b$ is non-negative, we see:
+
+$$c + \dfrac{b}{n+1} - \dfrac{a}{(n+1)^2} \ge c - 350 >0.$$
+
+This confirms - as the above graph suggests -- that $C_{tot}$ is increasing for $n \ge 19$. Thus for $n$ in $[19,\infty)$ the minimal costs are located at the endpoint.
+
+So to find the minimum value of the cost function $C_{\text{tot}}$ it is enough to find the minimum value for $n$ in the interval $[0,19]$.
+
+The interval $[0,19]$
+----------------------
+
+For $0 \le n \le 19$, the total cost function now has the form
+
+$$C_{tot}(n) = \dfrac{a_1}{n+1} + \dfrac{b \cdot n}{n+1} + cn + d$$
+
+where $b$ and $c$ are as before but now $a_1 = (500 + 10000)\cdot 280 = 10500 \cdot 280$,
+and where the constant $d$ is given by $d=-14\cdot 10000$.
+
+The derivative $\dfrac{dC_{tot}}{dn}$ is still given by $(\clubsuit)$ with $a$ replaced by $a_1$.
+
+To find critical points on the interval $(0,19)$, we solve the equation $\dfrac{dC_{tot}}{dn} = 0$ for $n$. Clearing denominators, we find that this amounts to solving the equation:
+$$0 = -a_1 + b + c(n+1)^2$$
+or
+$$(n+1)^2 = \dfrac{a_1 - b}{c}$$
+
+Since $n \ge 0$ is required by the problem, the solution is
+$$n= -1+\sqrt{\dfrac{a_1 - b}{c}}$$
+
+
+Let's compute this value:
 <!-- #endregion -->
 
 ```python
-def fine(n):   return F(time(n,miles=200,cleanup_rate=5.0/7),fine_per_day=10000)
-def c_crew(n): return crew_cost(n,miles=200,cleanup_rate=5.0/7,tc=18000)
-def c_tot(n):  return c_crew(n) + fine(n
-                                      )
+a_1 = 10500*280
+b=800*280
+c=18000
+-1 + math.sqrt((a_1 - b)/c)
 ```
 
-### Graphs
+Thus $C_{tot}$ has a critical point at a value slightly larger than $n=11$.
 
-We can use python's [matplotlib](https://matplotlib.org/) package to draw graphs of the functions
-`c_tot` and `fine`.
+Note that 
+$$\dfrac{d^2 C_{tot}}{dn^2} = \dfrac{d}{dn}\left[\dfrac{b-a}{(n+1)^2}\right]
+= \dfrac{-2(b-a)}{(n+1)^3}$$
+
+Since $b-a>0$, we find that $\dfrac{d^2 C_{tot}}{dn}$ is positive for $n \ge 0$. Thus, the graph is concave up and the indicated critical point is therefore a local minimum. 
+
+The computations we already made using ``python`` then confirm that $n=11$ minimizes the cost function (without this numerical evidence, the minimum might have occurred at $n=12$, or at 
+one of the endpoints $n=0$ or $n=19$).
+
+-------
 
 
-```python
-import matplotlib.pyplot as plt
-import numpy as np
-x = np.linspace(2, 30, 200)
+Sensitivity analysis
+====================
 
-fig, ax = plt.subplots(figsize=(12,6))  
-ax.plot(x,np.array([c_tot(n) for n in x]),label="C_tot(n)")
-ax.plot(x,np.array([fine(n)  for n in x]),label="Fine(n)")
+We are interested in describing the extent to which the solution to an optimization problem
+is sensitive to the parameters.
 
-ax.set_xlabel("# crews")
-ax.set_ylabel("total cost in $")
-ax.legend()
+In the case of this oil-spill problem, parameters include:
+- the length of beach that must be cleaned
+- the rate of beach cleaning that a crew can achieve (miles/week)
+- the travel costs per external crew
+- the daily fine imposed 
 
-ax.axvline(x=19,                   ## where the "fine-graph" bifurcates
-           color="red",   
-           dashes=[1,4])            
-ax.axvline(x=11.25,                ## we'll see (below) that the min of C occurs here.
-           color="green", 
-           dashes=[1,4])            
-ax.set_title("Cleanup costs")
-pass
-```
+We want a way of measuring how "sensitive" our solution was to a given parameter.
 
-### Some symbolic calculations
+For instance, let’s assume that the amount of miles cleaned per week, $m$, were not known exactly. Let’s look at the cost function again, but regard $m$ in as an unknown parameter.
 
-It is not really difficult to differentiate the functions \\(F(n)\\) (for \\(0 \le n \le 19\\)),  and \\(C_{crew}(n)\\) [described above](#calculus_cell) by hand. But let's see how we could do it using symbolic calculations in python's [symbolic mathematics package](https://www.sympy.org/en/index.html).
+We consider the cost function for $n$ in the range in which the fine applies (how reasonable is that assumption?!)
+
+As before, this function and its derivative have the form:
+$$C_{tot}(n) = \dfrac{a}{n+1} + \dfrac{b \cdot n}{n+1} + cn + d$$
+and
+$$\dfrac{dC_{tot}}{dn} = c + \dfrac{b}{(n+1)^2} - \dfrac{a}{(n+1)^2}$$
+Now, the coefficients $a,b,c,d$ depend on $m$.
+
+More precisely, going back to the original formulation one seees that
+
+- $a = \dfrac{10500 \cdot 200}{m}$
+
+- $b = \dfrac{800 \cdot 200}{m}$
+
+- $c = 18000$
+
+- $d = 14 \cdot 10000$
+
+Our earlier calculations show that $C_{tot}$ has exactly one critical point in the interval $n \ge 0$; in this situtation it is
+$$n= -1+\sqrt{\dfrac{a - b}{c}} = -1 + \sqrt{\dfrac{(10500-800)\cdot 200}{18000 \cdot m}} \approx -1 + \sqrt{\dfrac{107.7}{m}}$$
+
+Recall that the original value of $m$ was $5/7 \approx 0.71429$ miles per day.
+
+If instead $m = .75$, we find the critical point at
+$$n \approx -1 + \sqrt{\dfrac{107.7}{.75}} \approx 10.98$$
+
+If $m=.65$, we find the critical point at
+$$n \approx -1 + \sqrt{\dfrac{107.7}{.65}} \approx 11.87$$
+
+There is certainly *some* dependence on $n$, but it doesn't seem *too* sensitive.
+
+If a quantity $y = y(x)$ depends on a quantity $x$, the sensitivity of $y$ to $x$ is defined to be
+the relative change in $y$ brought about by a relative change in $x$:
+$$\dfrac{\dfrac{\Delta y}{y}}{\dfrac{\Delta x}{x}}=
+\dfrac {\dfrac{y(x+\Delta x) - y(x)}{y(x)}}{\dfrac{\Delta x}{x}}=
+\dfrac{y(x+\Delta x) - y(x)}{\Delta x} \cdot \dfrac{x}{y(x)}$$
+
+Taking the limit as $\Delta x \to 0$, this expression becomes
+$$S(y,x) = \dfrac{dy}{dx}\cdot \dfrac{x}{y}.$$
+
+In our problem, we consider the dependence of the critical point $n = n(m)$ on the quantity $m$.
+We have seen that
+$$n(m)\approx -1 + \sqrt{\dfrac{107.7}{m}} = -1 + \sqrt{107.7}\cdot m^{-0.5}$$
+
+So the sensitivity $S(n,m)$ is given by
+$$S(n,m) = \dfrac{dn}{dm} \cdot \dfrac{m}{n(m)} =  107.7 \cdot (-0.5) \cdot m^{-1.5} \cdot \dfrac{m}{-1 + 107.7 \cdot m^{-0.5}}
+= \dfrac{53.8 \cdot m^{0.5}}{1 - 107.7 \cdot m^{-0.5}}
+= \dfrac{53.8 \cdot m}{\sqrt{m} - 107.7}
+$$
+
+So e.g. when $m = 5/7 = 0.714$, we find that
+$$S(n,0.714) \approx -0.35949$$
+
+Thus a 1% change in the miles of beach cleaned per day by a crew results in  roughly a third of a % change in the optimal value of $n$.
+
+----------
+
+In contrast, if we did the same calculation with the fine amount, $f$ , we’d obtain $S(n, f) \approx 0.561$,
+for $f = 10,000$.
+This doesn’t very different right? However, while a 1% error in $m$ is reasonable, we expect
+much larger changes in $f$ (e.g. one can imagine regulators doubling the fine!).
+A 100% change in $f$ results in about a 56% change in $n$,
+so our strategy is not robust to "expected" changes in $f$.
+
+--------
+
+<!-- #region -->
+Finally, you may have been disappointed to have to do calculations with paper-and-pencil. 
+
+### Avoiding the paper-and-pencil work with symbolic calculations
+
+Computers can *approximate* derivatives in various ways, and this can be useful. But sometimes computers can even do symbolic calculations. The effectiveness of such calculations in general is probably somewhat limited, but e.g. if you know anything about computer algebra systems (Mathematica, Matlab, ...) you know that they can calculate (some) derivatives. 
+
+Can we do the same in ``python``?? 
+
+Of course!! I'm just going to give a sketch here.
+
+For more details about symbolic calculations in python consult [symbolic mathematics package](https://www.sympy.org/en/index.html).
+
+Recall the `python` expressions for the main funtion of interest:
+
+* $C_{tot}(n) \leftrightarrow $ `c.cost(n)`
+
+
 
 We will make a "symbolic variable" we'll call `y`.
 
-Now we can make a symbolic version `s_cost_low` of \\(C_{tot}(n)\\) by evaluating \\(n\\) at `y`.
+We would like to make a symbolic version the `python` function `c.cost(n)` by valuation at  `n=y`.
 
-We'll write:
+Unfortunately, our definition of `c.cost(n)` involved a test of inequality (to decide whether the fine calculation applied). But it is not "legal" to test inequalities with the symbol `y`. (More precisely, such tests can't be sensibly interpreted).
 
-`s_cost_low = c_crew(y) - 10000*(14-time(y,miles=200,cleanup_rate=5.0/7))`
+For small enough $n$, `c.cost(n)` is equal to
+`c.crew_costs(n) + c.fine_per_day * (c.time(n)-14)`. And this latter expression *can* be evaluated at the symbolic variable `y`.
 
-We can't evaluate the `fine` function at `y` because it is not legal to test inequalities with the symbol `y`.
+And *sympy* permits us to symbolically differentiate the resulting expression:
 
-The symbolic cost expression `s_cost_low` matches \\(C_{tot}(n)\\) for \\(n\\) in the interval
-\\([0,19)\\).
+We carry this out in the next cell:
+<!-- #endregion -->
 
-We must also understand the behaviour of \\(C_{tot}(n)\\) for \\(n>19\\). For that, we define
-
-`s_cost_high = c_crew(y)`
-
-So the symbolic expression `s_cost_high` matches \\(C_{tot}(n)\\) for \\(n \ge 19\\).
-
-Now *sympy* permits us to symbolically differentiate these expressions:
-
-```
-ds_cost_low = sp.diff(s_cost_low,y)
-ds_cost_high = sp.diff(s_cost_high,y)
-```
-We'll carry this out in the following cell:
-
-```python
+```python jupyter={"outputs_hidden": false}
 import sympy as sp
+c = OilSpillCleanup()
 
 y = sp.Symbol('y')    # symbolic variable
 
-s_cost_low  = c_crew(y) - 10000*(14-time(y,miles=200,cleanup_rate = 5.0/7))
-s_cost_high = c_crew(y)
+def lcost(n):
+    return c.crew_costs(n) + c.fine_per_day * (c.time(n) - 14)
 
-ds_cost_low  = sp.diff(s_cost_low,y)  # first derivative, for n<19
-ds_cost_high = sp.diff(s_cost_high,y) # first derivative for n>19
+lcost_symb = lcost(y)
 
-dds_cost_low = sp.diff(ds_cost_low,y) # second derivative, for n<19
+d_lcost_symb = sp.diff(lcost_symb,y)  # first derivative, for n<19
+dd_lcost_symb = sp.diff(d_lcost_symb,y) # second derivative, for n<19
 
-print(s_cost_low)
-print()
-print(ds_cost_low)
+print(f"C(y) = {lcost_symb}\n\n")
+print(f"C'(y) = {d_lcost_symb}\n\n")
+print(f"C''(y) = {dd_lcost_symb}\n\n")
 ```
 
-Remember that our goal is to find the minimum value(s) of the function \\(C_{tot}(n)\\) for \\(n\\) in the interval \\([0,\infty)\\).
-
-We are going to argue a few things:
-1. \\(C_{tot}\\) is increasing on the interval \\((19,\infty)\\)
-2. \\(C_{tot}\\) has a unique critical point in the interval \\((0,19)\\), which is a local minimum
-
-
-To argue 1., just need to show that \\(C'(n)\\) is positive on \\((19,\infty)\\).
-
-But we've symbolically computed the derivative `ds_cost_high`.
-
-And we can evaluate this symbolic expression at \\(y=19\\) by using
-`ds_cost_high.subs([(y,19)])`. Here `subs` means *substitution*.
-
-We see that \\(C'(19)\\) is positive:
+Now e.g. `sympy` solvers are able to find the critical point for the symbolic derivative `d_lcost_symb`, as follows:
 
 ```python
-ds_cost_high.subs([(y,19)])
+sp.solve(d_lcost_symb,y)
 ```
 
-And this derivative is never zero. Indeed we can confirm using
+This finds our postive critical point of 11.28. 
 
-`sp.solve(ds_cost_high,y)`
-
-that the only solutions for \\(C_{crew}'(z) = 0\\) are complex numbers with non-zero imaginary part:
-
-```python
-sp.solve(ds_cost_high,y)
-```
-
-So since \\(C_{tot}'(n)\\) is continuous on \\((19,\infty)\\), we conclude that \\(C_{tot}'(n) > 0\\) on \\((19,\infty)\\) which confirms 1. above.
-
-For 2., let's first look at a graph of the derivative \\(C'(n)\\)
-
-```python
-
-def diff(t):
-    return ds_cost_low.subs([(y,t)])
-
-x = np.linspace(7, 19, 200)
-
-fig, ax = plt.subplots(figsize=(12,6))  
-ax.plot(x,np.array([diff(z) for z in x]),label="(dC/dn)")
-ax.legend()
-ax.set_xlabel("#crews")
-ax.set_ylabel("dollars / crew")
-ax.axvline(x=11.28368,color="green",dashes=[1,4])
-pass
-```
-
-The graph suggests that the equation \\(C'(n)=0\\) has only one solution in the interval \\((0,19)\\)
-
-We can confirm this by again using the sympy symbolic solver to find the solutions to \\(C'(n) = 0\\), as follows:
-
-```python
-# find the critical points for our cost function
-#
-
-sp.solve(ds_cost_low,y)
-```
-
-So on the interval \\((0,19)\\) the cost function has only one critical point, at \\(n=11.28368\\).
-
-In order to see that \\(n=11.28368\\) minimizes the cost function, we only need to compare the value of \\(C\\) at the endpoints with the value at \\(n=11.28368\\).
-
-We compute:
-
-```python
-[c_tot(0),c_tot(11.28368),c_tot(19)]
-```
-
-This now confirms our [earlier observation](#minimal_cost_cell)  that \\(n=11\\) minimizes costs.
-
-
+This is convenient, but to solve the problem we still require analysis e.g. about the interval $19 < n$ (which isn't modelled by our symbolic function `lcost_symb`) and
+it requires us to study the critical point (apply second derivative test etc.) So there remains work to be done...
+----
 
 
 # Follow-up: Some general ideas behind modeling
@@ -473,3 +605,7 @@ This now confirms our [earlier observation](#minimal_cost_cell)  that \\(n=11\\)
 
 Of course this is very general and may be problem dependent, but it at least keeps us true to what
 we are trying to do with modeling.
+
+```python
+
+```
