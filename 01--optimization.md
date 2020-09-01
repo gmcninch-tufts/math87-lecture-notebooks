@@ -56,10 +56,13 @@ In this first section of our modeling class, we are going to examine a few *sing
 
 The procedure to carry out a calculus based solution can then be described roughly as follows: 
 
-- find the function \\(f(x)\\) that measures the quantity that you desire to optimize, and the relevant interval \\([a,b]\\) of values of independent variable \\(x\\). 
-- find the critical points \\(c_1,c_2,\dots,c_N\\) of \\(f\\) in the interval \\((a,b)\\).
-- if \\(f\\) is a *nice enough* function, the maximum and minimum value of \\(f\\) will be found in the list
-\\(f(a),f(c_1),\dots,f(c_N),f(b)\\) -- remember that you must check the endpoints \\(a,b\\)!
+- find the function $f(x)$ that measures the quantity that you desire
+  to optimize, and the relevant interval $[a,b]$ of values of
+  independent variable $x$.
+- find the critical points $c_1,c_2,\dots,c_N$ of $f$ in the interval $(a,b)$.
+- if $f$ is a *nice enough* function, the maximum and minimum value of
+  $f$ will be found in the list $f(a),f(c_1),\dots,f(c_N),f(b)$ --
+  remember that you must check the endpoints $a,b$!  
 <!-- #endregion -->
 
 <!-- #region -->
@@ -93,41 +96,41 @@ $$1.5 \cdot 10000 = 15000.$$
 
 Relevant parameters:
 
-* miles cleaned per crew per week = \\(5\\), so
-* \\(m\\) = miles cleaned per crew per day = \\(5/7\\)
-* \\(f\\) = fine charged per day = \\$\\(10,000\\)
-* \\(TC\\) = travel costs per outside crew = \\$\\(18,000\\)
+* miles cleaned per crew per week = $5$, so
+* $m$ = miles cleaned per crew per day = $5/7$
+* $f$ = fine charged per day = \\$$10,000$
+* $TC$ = travel costs per outside crew = \\$$18,000$
 
 
 The main choice that the company must make is: "how many outside crews to hire?"
 
-* \\(n\\) = # of outside crews to hire
+* $n$ = # of outside crews to hire
 
 According to the background description, there are a number of quantities that depend on this choice:
 
-* \\(t\\) = # of days for complete cleanup
-* \\(F\\) = fine to be paid
-* \\(C_{crew}\\) = payments to cleanup crews
-* \\(C_{tot}\\) = total cleanup cost = \\(F + C_{crew}\\)
+* $t$ = # of days for complete cleanup
+* $F$ = fine to be paid
+* $C_{crew}$ = payments to cleanup crews
+* $C_{tot}$ = total cleanup cost = $F + C_{crew}$
    
 ---
 
 Let's give **mathematical expressions** for these quantities:
 
-* \\(t = 200\cdot \dfrac{1}{n+1} \cdot \dfrac{1}{m}\\)
+* $t = 200\cdot \dfrac{1}{n+1} \cdot \dfrac{1}{m}$
 
-(Indeed, \\(n+1\\) crews working at a rate of \\(m\\) miles per day
+(Indeed, $n+1$ crews working at a rate of $m$ miles per day
 will clean 200 miles of beach in the indicated number of days)
 
-* \\(F= \begin{cases} 0 & \text{if $t<14$} \\ f\cdot(t-14) & \text{if
-  $t \ge 14$} \end{cases} \\)
+* $F= \begin{cases} 0 & \text{if $t<14$} \\ f\cdot(t-14) & \text{if
+  $t \ge 14$} \end{cases} $
 
 (Indeed, no fine if work is completed within two weeks; otherwise, the
 fine is given by the indicated formula)
 
-* \\(C_{crew} = 500\cdot t + 800\cdot t\cdot n + TC\cdot n\\)
+* $C_{crew} = 500\cdot t + 800\cdot t\cdot n + TC\cdot n$
 
-* \\(C_{tot} = F + C_{crew}\\)
+* $C_{tot} = F + C_{crew}$
     
 ---	
 	
@@ -177,7 +180,7 @@ class OilSpillCleanup:
 ### Let's first just make a table of results
 
 In our table, the rows will contain the values of the various
-quantities for possible values of \\(n\\), the number of "outside"
+quantities for possible values of $n$, the number of "outside"
 cleanup crews hired.
 
 For this, we are going to use python's [**Pandas**
@@ -245,7 +248,10 @@ def report_minimal_costs(c,crew_range=range(0,25)):
 
 ### <a id='minimal_cost_cell'> Minimal costs (for basic parameters)</a>
 
-From the preceding calculation, it appears that the cost is minimized by hiring \\(n=11\\) outside crews. With that number of crews, cleanup takes slightly more than 3 weeks with a total cost of \\$508K (including a fine of \\$93K).
+From the preceding calculation, it appears that the cost is minimized
+by hiring $n=11$ outside crews. With that number of crews, cleanup
+takes slightly more than 3 weeks with a total cost of \\$508K
+(including a fine of \\$93K).
 
 Below, we'll use some calculus to confirm this observation!!!
 
@@ -276,41 +282,41 @@ print(report_minimal_costs(c1,crew_range=range(0,35)))
 -----
 ## <a id="calculus_cell">Applying calculus to the problem</a>
 
-Our computations so far *suggest* - but don't *confirm* - the optimal number of crews to hire to minimize costs. We are going to use calculus to confirm this number for our "default" parameter values \\(m = 5.0/7\\), \\(TC=18000\\), \\(f=10000\\), for 200 miles of coast.
+Our computations so far *suggest* - but don't *confirm* - the optimal number of crews to hire to minimize costs. We are going to use calculus to confirm this number for our "default" parameter values $m = 5.0/7$, $TC=18000$, $f=10000$, for 200 miles of coast.
 
 Recall the formulas:
 
-* \\(t = 200\cdot \dfrac{1}{n+1} \cdot \dfrac{1}{5/7} = \dfrac{280}{n+1}\\)
+* $t = 200\cdot \dfrac{1}{n+1} \cdot \dfrac{1}{5/7} = \dfrac{280}{n+1}$
 
-* \\(F= \begin{cases}  0 &  \text{if $t<14$} \\ 10000\cdot(t-14) & \text{if $t \ge 14$} \end{cases} \\)
+* $F= \begin{cases}  0 &  \text{if $t<14$} \\ 10000\cdot(t-14) & \text{if $t \ge 14$} \end{cases} $
 
-* \\(C_{crew} = 500\cdot t + 800\cdot t\cdot n + 18000\cdot n\\)
+* $C_{crew} = 500\cdot t + 800\cdot t\cdot n + 18000\cdot n$
 
-* \\(C_{tot} = F + C_{crew}\\)
+* $C_{tot} = F + C_{crew}$
 
-\\(C_{tot}\\) is expressed here as a function of both \\(t\\) and \\(n\\). But of course, \\(t\\) is determined by \\(n\\).
+$C_{tot}$ is expressed here as a function of both $t$ and $n$. But of course, $t$ is determined by $n$.
 
-We want to express \\(C_{tot}\\) as a function only of \\(n\\). The obstacle here is that the fine \\(F\\) is not expressed directly as a function of \\(n\\), and the best way to deal with this is to consider different cases.
+We want to express $C_{tot}$ as a function only of $n$. The obstacle here is that the fine $F$ is not expressed directly as a function of $n$, and the best way to deal with this is to consider different cases.
 
 We first ask the question: "how many crews would we need if we were to clean
 everything up in exactly 14 days?"
 
-For this we must solve the equation \\(t(n)=14\\); i.e.: 
-\\[14 = \dfrac{280}{1+n}\\]
+For this we must solve the equation $t(n)=14$; i.e.: 
+$$14 = \dfrac{280}{1+n}$$
 
-Thus, \\(n+1=\dfrac{280}{14}\\). We find that
-\\(n+1 = 20\\) so that \\(n=19\\). In other words, if 19 external crews are hired, work is completed in two weeks.
+Thus, $n+1=\dfrac{280}{14}$. We find that
+$n+1 = 20$ so that $n=19$. In other words, if 19 external crews are hired, work is completed in two weeks.
 
-Thus we see that for \\(n \ge 19\\) we have \\(F = 0\\) and \\(C_{tot} = C_{crew}\\), while for \\(n < 19\\)
-\\[F(n) = 10000\cdot \left (\dfrac{280}{1+n} - 14\right)\\] 
+Thus we see that for $n \ge 19$ we have $F = 0$ and $C_{tot} = C_{crew}$, while for $n < 19$
+$$F(n) = 10000\cdot \left (\dfrac{280}{1+n} - 14\right)$$ 
 
 The remaining expenses are the costs associated with hiring cleanup crews. They are
 given by the function:
 
-\\[C_{crew}(n) = \dfrac{500 \cdot 280}{1+n}+\dfrac{800 \cdot 280}{1+n}⋅n+18000⋅n \\]
+$$C_{crew}(n) = \dfrac{500 \cdot 280}{1+n}+\dfrac{800 \cdot 280}{1+n}⋅n+18000⋅n $$
 
-And, the total cost function is given as a function of \\(n\\) by:
-\\[C_{tot}(n) =  \left \{ \begin{matrix} F(n) + C_{crew}(n) & n < 19 \\ C_{crew}(n) & n \ge 19\end{matrix} \right .\\] 
+And, the total cost function is given as a function of $n$ by:
+$$C_{tot}(n) =  \left \{ \begin{matrix} F(n) + C_{crew}(n) & n < 19 \\ C_{crew}(n) & n \ge 19\end{matrix} \right .$$ 
 
 We now pause to use `python` to draw some graphs.
 
