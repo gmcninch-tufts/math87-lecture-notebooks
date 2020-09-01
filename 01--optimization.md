@@ -198,11 +198,11 @@ pd.set_option('display.float_format', lambda x: "{:,.2f}".format(x))
 ```
 
 ```python jupyter={"outputs_hidden": false}
-# define an instance of the cleanup class, with the default arguments.
+# define an instance of the OilSpillCleanup class, with the default arguments.
 c = OilSpillCleanup()
 
 # and define a function of two arguments:
-# c, a class of type cleanup, and
+# c, a class of type OilSpillCleanup, and
 # crew_range, a list of integers, to be used as the "number of external crews hired"
 #             crew_range defaults to the list [0,1,...,24]
 #
@@ -265,7 +265,7 @@ Before talking about the calculus, let's observe that it is easy to look for min
 Consider the following example:
 
 ```python jupyter={"outputs_hidden": false}
-## make a new instance of our cleanup class, with some different parameters
+## make a new instance of our OilSpillCleanup class, with some different parameters
 
 c1 = OilSpillCleanup(miles=300,fine_per_day=20000,tc=15000,cleanup_rate=.5)
 
@@ -321,7 +321,7 @@ We now pause to use `python` to draw some graphs.
 
 <!-- #region jupyter={"outputs_hidden": false} -->
 
-Of course, in python we find these functions using methods of the class `c = cleanup()` as follows:
+Of course, in python we find these functions using methods of the class `c = OilSpillCleanup()` as follows:
 
 * $F(n)   \leftrightarrow$  `c.fine(c.time(n))`
 * $C_{crew}(n) \leftrightarrow $ `c.crew_cost(n)`
