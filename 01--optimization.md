@@ -122,8 +122,9 @@ Let's give **mathematical expressions** for these quantities:
 (Indeed, $n+1$ crews working at a rate of $m$ miles per day
 will clean 200 miles of beach in the indicated number of days)
 
-* $F= \begin{cases} 0 & \text{if $t<14$} \\ f\cdot(t-14) & \text{if
-  $t \ge 14$} \end{cases} $
+* $F= \begin{cases} 
+        0 & \text{if $t<14$} \\ 
+        f\cdot(t-14) & \text{if $t \ge 14$} \end{cases}$
 
 (Indeed, no fine if work is completed within two weeks; otherwise, the
 fine is given by the indicated formula)
