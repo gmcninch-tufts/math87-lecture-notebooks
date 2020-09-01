@@ -353,11 +353,10 @@ def create_graph(c, crew_min=2, crew_max=30, mesh=200, vlines = []):
     ax.set_title("Cleanup costs")
     return fig
 
-gg=create_graph(c,vlines=[11.23,19])
-
-## the return value of create_graph 
-## in a notebook, you'll just see the graph output.
-## if not in a notebook, you should now call gg.show() in order to *see* the graph...
+gg=create_graph(c)
+##
+## if you not in a notebook, you should now call gg.show() in order to *see* the graph...
+##
 ```
 
 <!-- #region -->
@@ -412,7 +411,7 @@ Let's compute this value:
 a_1 = 10500*280
 b=800*280
 c=18000
--1 + np.sqrt((a_1 - b)/c)
+-1 + math.sqrt((a_1 - b)/c)
 ```
 
 Thus $C_{tot}$ has a critical point at a value slightly larger than $n=11$.
@@ -604,7 +603,7 @@ it requires us to study the critical point (apply second derivative test etc.) S
     - Think about what the errors might be, or how realistic the answer actually is.
     - How did it compare to what expectations?
 
-Of course this is very general and may be problem dependent, but it at least describes our goals in modeling.
+Of course this is very general and may be problem dependent, but it describes our targets with modeling.
 
 ```python
 
