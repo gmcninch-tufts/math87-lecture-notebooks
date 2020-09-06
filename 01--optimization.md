@@ -6,7 +6,7 @@ jupyter:
       extension: .md
       format_name: markdown
       format_version: '1.2'
-      jupytext_version: 1.5.2
+      jupytext_version: 1.6.0
   kernelspec:
     display_name: Python 3
     language: python
@@ -211,7 +211,7 @@ def oil_spill_costs(c, crew_range=range(0,25)):
             {'#external crews'      : crew_range,
              'cost'   : map( lambda n: c.cost(n) , crew_range),
              'days'   : map( lambda n: c.time(n) , crew_range),
-             'fine'   : map( lambda n: c.fine(n) , crew_range)
+             'fine'   : map( lambda n: c.fine(c.time(n)) , crew_range)
             },
             index=crew_range)
     
@@ -245,6 +245,12 @@ def report_minimal_costs(c,crew_range=range(0,25)):
 
 ```
 
+```python
+## c is the class obtained above via OilSpillCleanup()
+##
+print(report_minimal_costs(c))
+```
+
 ### <a id='minimal_cost_cell'> Minimal costs (for basic parameters)</a>
 
 From the preceding calculation, it appears that the cost is minimized
@@ -254,11 +260,6 @@ takes slightly more than 3 weeks with a total cost of \\$508K
 
 Below, we'll use some calculus to confirm this observation!!!
 
-```python
-## c is the class obtained above via OilSpillCleanup()
-##
-print(report_minimal_costs(c))
-```
 
 Before talking about the calculus, let's observe that it is easy to look for minimal costs with other parameters. With this code, we need to be careful that the range of crew sizes the code considers is large enough, though. 
 
@@ -280,6 +281,8 @@ print(report_minimal_costs(c1,crew_range=range(0,35)))
 
 -----
 ## <a id="calculus_cell">Applying calculus to the problem</a>
+
+We now return to consideration of the "default values" of the parameters.
 
 Our computations so far *suggest* - but don't *confirm* - the optimal number of crews to hire to minimize costs. We are going to use calculus to confirm this number for our "default" parameter values $m = 5.0/7$, $TC=18000$, $f=10000$, for 200 miles of coast.
 
