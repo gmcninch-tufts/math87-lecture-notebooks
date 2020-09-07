@@ -140,7 +140,7 @@ Note that we use the parameter values as *default values* for some of the argume
 of the *crew_cost* and *cost* functions.
 <!-- #endregion -->
 
-```python jupyter={"outputs_hidden": false}
+```python
 class OilSpillCleanup:
     def __init__(self,cleanup_rate=5.0/7,tc=18000,miles=200,fine_per_day=10000):
         self.miles = miles                
@@ -188,7 +188,7 @@ module](https://pandas.pydata.org/docs/index.html).  We'll use the
 for which the keys are the column headers and the values are the
 column data).
 
-```python jupyter={"outputs_hidden": false}
+```python
 import pandas as pd
 
 ## The following overrides the usual display formatting of floating point numbers. 
@@ -197,7 +197,7 @@ import pandas as pd
 pd.set_option('display.float_format', lambda x: "{:,.2f}".format(x))
 ```
 
-```python jupyter={"outputs_hidden": false}
+```python
 # define an instance of the OilSpillCleanup class, with the default arguments.
 c = OilSpillCleanup()
 
@@ -224,7 +224,7 @@ We can of course just scan the columns with our eyes to see where the costs are 
 In the terminology of *pandas*, we'll extract the *costs* column `df['cost']` of the "dataframe" `df` as a *series*, and then use the `idxmin` method to find the *index* `j` at which the costs are minimized.
 Finally, the loc property of `df` allows to select the data `df.loc[j]` in the row with index label `j`.
 
-```python jupyter={"outputs_hidden": false}
+```python
 def minimize_costs(c,crew_range=range(0,25)):
     ## make the data-frame 
     costs_df = oil_spill_costs(c,crew_range) 
@@ -265,7 +265,7 @@ Before talking about the calculus, let's observe that it is easy to look for min
 
 Consider the following example:
 
-```python jupyter={"outputs_hidden": false}
+```python
 ## make a new instance of our OilSpillCleanup class, with some different parameters
 
 c1 = OilSpillCleanup(miles=300,fine_per_day=20000,tc=15000,cleanup_rate=.5)
@@ -338,7 +338,7 @@ For a specified class `c` of `OilSpillCleanup`, we can use python's [matplotlib]
 `c.cost(n)` and `c.fine(c.time(n))` viewed as functions of `n`.
 
 
-```python jupyter={"outputs_hidden": false}
+```python
 c = OilSpillCleanup()   ### the class with the default values
 
 import matplotlib.pyplot as plt
@@ -512,7 +512,7 @@ Thus a 1% change in the miles of beach cleaned per day by a crew results in  rou
 
 In contrast, if we did the same calculation with the fine amount, $f$ , we’d obtain $S(n, f) \approx 0.561$,
 for $f = 10,000$.
-This doesn’t very different right? However, while a 1% error in $m$ is reasonable, we expect
+Of course, this doesn’t sound very different, but note that while a 1% error in $m$ is reasonable, we probably expect
 much larger changes in $f$ (e.g. one can imagine regulators doubling the fine!).
 A 100% change in $f$ results in about a 56% change in $n$,
 so our strategy is not robust to "expected" changes in $f$.
@@ -552,7 +552,7 @@ And *sympy* permits us to symbolically differentiate the resulting expression:
 We carry this out in the next cell:
 <!-- #endregion -->
 
-```python jupyter={"outputs_hidden": false}
+```python
 import sympy as sp
 c = OilSpillCleanup()
 
@@ -614,6 +614,6 @@ it requires us to study the critical point (apply second derivative test etc.) S
 
 Of course this is very general and may be problem dependent, but it at least describes our goals in modeling.
 
-```python
+```python jupyter={"outputs_hidden": true}
 
 ```
