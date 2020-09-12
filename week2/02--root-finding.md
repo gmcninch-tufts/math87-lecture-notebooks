@@ -274,6 +274,76 @@ See what happens when you vary $x_0$ in the computation of ``newt_pi`` above.
 
 See what happens when you give ``newton`` an incorrect first derivative.
 
+
+Modeling example
+=================
+
+A large population of $N$ people need to be tested for a disease. In order to reduce the costs of
+testing, a grouping strategy is proposed: Take blood samples from each person in a group of $x$
+people. Divide each sample in half and mix one-half of each person’s sample into one mixture. Test
+the mixture. If it is negative, then we know that all $x$ people in the group are negative. If it is positive, then at least one person in that group is positive, so test the other half of each person’s sample. What value of $x$ minimizes the total number of tests that needs to be done?
+
+Variables:
+- $N$ = total population
+- $x$ = group size
+- $q$ = probability of one individual testing negative
+- $T$ = total number of tests
+- $T_g$ = total number of group tests
+- $T_i$ = expected number of individual tests
+- $T = T_g + T_i$
+
+The number of group tests is just the population/group size, $T_g = N/x$.
+
+For $T_i$ we have $N/x$ groups of $x$ people and the probability of all people in the group being negative is $q^x$. Thus, the probability of one person in the group testing positive is $1 − q^x$.
+If this happens, we have to do x tests! So...
+
+$$T_i = \dfrac{N}{x}\left[(1-q^x)x \right] = N\left(1-q^x\right).$$
+and thus
+$$T = T_i + T_g = \dfrac{N}{x} + N(1-q^x) = N(\dfrac{1}{x} + 1 - q^x).$$
+
+To find the value of $x$ that yields the minimum number of required tests, we need to solve
+the equation $\dfrac{dT}{dx} = 0$.
+
+Well,
+$$\dfrac{dT}{dx} = N\left(\dfrac{-1}{x^2} - q^x \ln q\right).$$
+
+Since $q$ represents a *probability*, we have $0<q<1$. In particular, $\ln(q) < 0$. Thus
+in order that $\dfrac{dT}{dx} = 0$. we must have
+$$g(x) = \dfrac{-1}{x^2} - (\ln q)q^x = 0.$$
+
+It is not easy to directly solve the equation $g(x) = 0$. So we will apply Newton's method.
+For this, we need to know $g'(x)$ as well; it is
+
+$$g'(x) = \dfrac{2}{x^3} - (\ln q)^2 q^x.$$
+
+```python
+import numpy as np
+from functools import partial 
+
+def g(q,x):
+    return (-1/x**2) - np.log(q)* q**x
+
+def gprime(q,x):
+    return 2/x**3 - (np.log(q))**2 * q**x
+
+q_values = [0.7, 0.8, 0.9, 0.95, 0.99, 0.999, 0.9999]
+
+## note that partial(g,q) returns the function given by h(x) = g(q,x)
+## in other words, we "partially evaluate" the function g(q,x) to get a function 
+## only of x.
+
+def newt(q): 
+    return newton(partial(g,q),2,fprime=partial(gprime,q))
+
+# the following code returns a list of pairs (q,newt(q))
+# where q runs through the list q_values.
+# Here, newt(q) is the solution to g(q,x) = 0 obtained from Newton's method
+# (with x0 = 2).
+
+list(map(lambda x: (x,newt(x)),q_values))
+
+```
+
 ```python
 
 ```
