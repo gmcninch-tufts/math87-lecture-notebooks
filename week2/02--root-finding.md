@@ -43,7 +43,7 @@ Bisection - overview
 
 The bisection algorithm permits one to approximate a root of a continuous function $𝑓$, provided that one knows points $𝑥_𝐿<𝑥_𝑅$ in the domain of $𝑓$ for which the function values $𝑓(𝑥_𝐿)$ and $𝑓(𝑥_𝑅)$ are non-zero and have opposite signs. The algorithm then returns an approximate root in the interval $(𝑥_𝐿,𝑥_𝑅)$.
 
-Of course, for a continuous $𝑓$ the *intermediate value theorem* implies that there is at least one root $𝑥_)$ of $𝑓$ in the interval $(𝑥𝐿,𝑥𝑅)$.
+Of course, for a continuous $𝑓$ the *intermediate value theorem* implies that there is at least one root $𝑥_0$ of $𝑓$ in the interval $(𝑥𝐿,𝑥𝑅)$.
 
 To find a root, the algorithm iteratively divides the interval $[𝑥_𝐿,𝑥_𝑅]$
 into two sub-intervals by introducing the midpoint $𝑥_𝐶=\dfrac{𝑥_𝐿+𝑥_𝑅}{2}$. It examines the signs of the values $𝑓(𝑥_𝐿)$, $𝑓(𝑥_𝐶)$ and $𝑓(𝑥_𝑅)$ and discards the interval on which the sign doesn't change. (Of course, if $𝑓(𝑥_𝐶)$
@@ -268,7 +268,7 @@ report = "\n".join([f"secant: {e_secant}",
 print(report)
 ```
 
-**Question**: what was the role of $x_0$ and $x_1$ in the above secant method examples? and what was the reol of $x_0$ in the above newton method examples?
+**Question**: what was the role of $x_0$ and $x_1$ in the above secant method examples? and what was the role of $x_0$ in the above newton-method examples?
 
 See what happens when you vary $x_0$ in the computation of ``newt_pi`` above.
 
