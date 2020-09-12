@@ -79,8 +79,8 @@ $$D=D(x_0,y_0) = \left(\dfrac{\partial^2 f}{\partial x^2}\cdot \dfrac{\partial^2
    
    
 Suppose that $(x_0,y_0)$ is a critical point. 
-- If $D>0$ and $\dfrac{\partial f}{\partial x}\bigg\vert_{(x_0,y_0)}<0$, then $f(x,y)$ has a relative maximum at $(x_0,y_0)$.
-- If $D>0$ and $\dfrac{\partial f}{\partial x}\bigg\vert_{(x_0,y_0)}>0$, then $f(x,y)$ has a relative minimum at $(x_0,y_0)$.
+- If $D>0$ and $\dfrac{\partial^2 f}{\partial x^2}\bigg\vert_{(x_0,y_0)}<0$, then $f(x,y)$ has a relative maximum at $(x_0,y_0)$.
+- If $D>0$ and $\dfrac{\partial^2 f}{\partial x^2}\bigg\vert_{(x_0,y_0)}>0$, then $f(x,y)$ has a relative minimum at $(x_0,y_0)$.
 
 - If $D<0$, then $f(x,y)$ has a saddle point at $(x_0,y_0)$.
 - If $D=0$, the second derivative test is inconclusive. 
