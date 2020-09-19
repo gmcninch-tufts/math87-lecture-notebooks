@@ -494,12 +494,14 @@ and with inequality constraints determined by
 $$\begin{bmatrix} 2 & 3 & 1\end{bmatrix}\cdot \mathbf{x} \le 5$$
 $$\begin{bmatrix} 4 & 1 & 2\end{bmatrix}\cdot \mathbf{x} \le 11$$
 $$\begin{bmatrix} 3 & 4 & 2\end{bmatrix}\cdot \mathbf{x} \le 8$$
-$$\begin{bmatrix} 1 & 1 & 1\end{bmatrix}\cdot \mathbf{x} \ge 0$$
+$$\mathbf{0} \le \mathbf{x}$$
 where $$\mathbf{x} = \begin{bmatrix}
 x \\
 y \\
 z
 \end{bmatrix}$$
+
+Note that the constraint $$\mathbf{0} \le \mathbf{x}$$ is imposed *by default* by the ``linprog`` function of ``scipy``.
 
 ```python
 c = np.array([5,4,3])
