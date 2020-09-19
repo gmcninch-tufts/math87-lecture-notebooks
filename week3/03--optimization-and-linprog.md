@@ -176,7 +176,7 @@ on the **boundary** of the feasible region.
 But the boundary itself is made up of line segments. And on each line segment, the restriction of $p$ is again a linear function. For example, on the line 
 $5t+4b=120$, the profit is given as a function of $t$ by
 $$p_1(t) = p(t,b(t)) = p\left(t,\dfrac{120-5t}{4}\right) = 25 t + \dfrac{30}{4}(120-5t).$$
-Since $\dfrac{p_1}{dt} = \dfrac{-50}{4}$, again $p_1$ has no critical points; its max on the boundary line segment will occur at one of the endpoints.
+Since $\dfrac{dp_1}{dt} = \dfrac{-50}{4}$, again $p_1$ has no critical points; its max on the boundary line segment will occur at one of the endpoints.
 
 In this manner, we see that *the maximum value of $p$ must occur at one of the itersection points* of boundary lines defining the feasible region, i.e. at one of the points
 $$(0,0), \quad (0,23), \quad (24,0), \quad \text{or} \quad (12,15).$$
@@ -268,7 +268,7 @@ Notations
 We now pause to fix some *notation:*
 
 Suppose that the inequality constraints are determined by linear functions corresponding to 
-vectors $$\mathbf{a}_1 = \begin{bmatrix} a_{1,1} & a_{2,1} & \cdots & a_{r,1} \end{bmatrix}, \mathbf{a}_2,\cdots,\mathbf{a}_r \in \mathbf{R}^{1 \times n}$$ and scalars $b_i$ for $1 \le i \le r$.
+vectors $$\mathbf{a}_1 = \begin{bmatrix} a_{1,1} & a_{1,2} & \cdots & a_{1,n} \end{bmatrix}, \mathbf{a}_2,\cdots,\mathbf{a}_r \in \mathbf{R}^{1 \times n}$$ and scalars $b_i$ for $1 \le i \le r$.
 
 The $i$-th inequality constraint requires that
 $$\mathbf{a}_i \cdot \mathbf{x} \le b_i$$.
