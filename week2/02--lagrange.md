@@ -1,6 +1,7 @@
 ---
 jupyter:
   jupytext:
+    formats: ipynb,md
     text_representation:
       extension: .md
       format_name: markdown
@@ -80,7 +81,7 @@ If we seek critical points of the Lagrangian, we find that
 $$0 = \dfrac{\partial F}{\partial x} = \dfrac{\partial f}{\partial x} - \lambda\dfrac{\partial g}{\partial x}$$
 and similarly for $y$, so that
 $$ \dfrac{\partial f}{\partial x} = \lambda \dfrac{\partial g}{\partial x} \quad \text{and}\quad
-\dfrac{\partial f}{\partial x} = \lambda \dfrac{\partial g}{\partial x}$$
+\dfrac{\partial f}{\partial y} = \lambda \dfrac{\partial g}{\partial y}$$
 i.e.
 $$ \left (\dfrac{\partial f}{\partial x} \mathbf{i} + \dfrac{\partial f}{\partial y} \mathbf{j} \right)
 = \lambda \left (\dfrac{\partial g}{\partial x} \mathbf{i} + \dfrac{\partial g}{\partial y} \mathbf{j} \right)$$
@@ -200,7 +201,7 @@ import numpy as np
 import sympy as sp
 
 ## coefficient matrix
-M=np.array([[0.02,.007,1],[.007,.02,1],[1,1,0]])
+M=np.array([[0.02,0.007,1],[0.007,0.02,1],[1,1,0]])
 
 ## inverse of coefficient matrix
 Mi = np.linalg.inv(M)
