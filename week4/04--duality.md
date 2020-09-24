@@ -40,7 +40,7 @@ Definition of $\mathcal{L}'$
 The linear program $\mathcal{L}'$ dual to $\mathcal{L}$ is determined by the data
 $(\mathbf{b}^T,\mathbf{A}^T,\mathbf{c}^T)$; thus $\mathcal{L}$ seeks to optimize the value
 $\mathbf{b}^T \cdot \mathbf{y}$ -- note that $\mathbf{b}^T \in \mathbb{R}^{1 \times r}$ -- so in this case the variable is a non-negative vector $\mathbf{y} \in \mathbb{R}^r$, $\mathbf{y} \ge \mathbf{0}$
-subject to the inequality constraint $A^T \mathbf{y} \ge \mathbf{c}$.
+subject to the inequality constraint $A^T \mathbf{y} \ge \mathbf{c}^T$.
 
 If the *primal* linear program $\mathcal{L}$ seeks to *minimize*/*maximize* the value $\mathbf{c} \cdot \mathbf{x}$ of its objective function, the dual linear program seeks to *maximize*/*minimize* the value $\mathbf{b}^T \cdot \mathbf{y}$ of its objective function, and 
 
