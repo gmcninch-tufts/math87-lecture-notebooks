@@ -287,18 +287,26 @@ $$A \cdot \mathbf{x} \le \mathbf{b}  = \begin{bmatrix} b_1 \\ b_2 \\ \vdots \\ b
 
 ## Standard Form
 
-Recipulating, a **linear programming problem** is determined by the number $n$ of variables, the choice of a vector $\mathbf{c}, \mathbf{a}_1, \mathbf{a}_2,\cdots,\mathbf{a}_r \in \mathbf{R}^{1 \times n}$ and the choice of scalars $b_1,\dots,b_r$.
+Recapitulating, a **linear programming problem** is determined by the
+number $n$ of variables, the choice of a vectors $\mathbf{c},
+\mathbf{a}_1, \mathbf{a}_2,\cdots,\mathbf{a}_r \in \mathbf{R}^{1
+\times n}$ and the choice of scalars $b_1,\dots,b_r$.
 
-The goal is to maximize $\mathbf{c} \cdot \mathbf{x}$ subject to the constraint
-$$\mathbf{A} \cdot \mathbf{x} \le \mathbf{b}$$
-where $A = \begin{pmatrix} \mathbf{a}_1 \\ \mathbf{a}_2 \\ \vdots \\ \mathbf{a}_r \end{pmatrix}$ is the $r \times n$ matrix whose rows are the row-vectors $\mathbf{a}_i$ and $\mathbf{b} \in \mathbf{R}^r$ has entries $b_i$.
+The goal is to maximize $\mathbf{c} \cdot \mathbf{x}$ subject to the
+constraint $$\mathbf{A} \cdot \mathbf{x} \le \mathbf{b}$$ where $A =
+\begin{pmatrix} \mathbf{a}_1 \\ \mathbf{a}_2 \\ \vdots \\ \mathbf{a}_r
+\end{pmatrix}$ is the $r \times n$ matrix whose rows are the
+row-vectors $\mathbf{a}_i$ and $\mathbf{b} \in \mathbf{R}^r$ has
+entries $b_i$.
 
 We say that the linear programming problem is posed in standard form if it has this form.
 
-* **Remark**: if $\mathbf{a} \in \mathbf{R}^{1 \times n}$ and $b \in \mathbf{R}$, an inequality constraint of the form 
-$$(\clubsuit) \quad \mathbf{a} \cdot \mathbf{x} \ge b$$
-can be rewritten in "standard form" by taking $\mathbf{\widetilde a} = -\mathbf{a}$ and $\widetilde b = -b$; then $(\clubsuit)$ is equivalent to
-$$\mathbf{\widetilde a} \cdot \mathbf{x} \le \widetilde b$$.
+* **Remark**: if $\mathbf{a} \in \mathbf{R}^{1 \times n}$ and $b \in
+\mathbf{R}$, an inequality constraint of the form $$(\clubsuit) \quad
+\mathbf{a} \cdot \mathbf{x} \ge b$$ can be rewritten in "standard
+form" by taking $\mathbf{\widetilde a} = -\mathbf{a}$ and $\widetilde
+b = -b$; then $(\clubsuit)$ is equivalent to $$\mathbf{\widetilde a}
+\cdot \mathbf{x} \le \widetilde b$$.
 
 ------
 
@@ -315,7 +323,7 @@ $$B = \begin{pmatrix} \mathbf{b}_1 \\ \mathbf{b}_2 \\ \vdots \\ \mathbf{b}_s \en
 The product $B \cdot \mathbf{x} \in \mathbf{R}^s $ is given by 
 $$B \cdot \mathbf{x} = \begin{pmatrix} \mathbf{b}_1 \\ \mathbf{b}_2 \\ \vdots \\ \mathbf{b}_s \end{pmatrix}\cdot \mathbf{x}
 = \begin{pmatrix} \mathbf{b}_1 \cdot \mathbf{x} \\ \mathbf{b}_2 \cdot \mathbf{x} \\ \vdots \\ \mathbf{b}_s \cdot \mathbf{x} \end{pmatrix} $$
-Now, the equality constraints amount to the condition that $$(\heartsuit) \quad B \cdot \mathbf{x} = \begin{pmatrix} \gamma_1 \\ \gamma_2 \\ \vdots \\ \gamma_2 \end{pmatrix}$$.
+Now, the equality constraints amount to the condition that $$(\heartsuit) \quad B \cdot \mathbf{x} = \begin{pmatrix} \gamma_1 \\ \gamma_2 \\ \vdots \\ \gamma_s \end{pmatrix}$$.
 
 An important observation of *linear algebra* is that the solution set to $(\heartsuit)$ has the form $$\mathbf{x}_0 + \operatorname{Null}(B)$$
 where $\mathbf{x}_0$ is any *particular solution* to $(\heartsuit)$ and where
