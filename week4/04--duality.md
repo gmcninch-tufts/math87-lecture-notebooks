@@ -147,7 +147,7 @@ The second theorem relates the values of the objective functions for $\mathcal{L
 and if $\mathbf{y}^*$ is an optimal solution for $\mathcal{L}'$, then
 $$\mathbf{c} \mathbf{x}^* = \mathbf{b}^T \mathbf{y}^*.$$
 > Conversely, if $\mathbf{x}^*$ is a feasible point for $\mathcal{L}$, if $\mathbf{y}^*$ is a feasible point for $\mathcal{L}'$ and if $\mathbf{c} \cdot \mathbf{x}^* = \mathbf{b}^T \cdot \mathbf{y}^*$
-then $\mathbf{x}$ is an optimal solution for $\mathcal{L}$ and $\mathbf{y}$ is an optimal solution for $\mathcal{L}'$.
+then $\mathbf{x}^*$ is an optimal solution for $\mathcal{L}$ and $\mathbf{y}^*$ is an optimal solution for $\mathcal{L}'$.
 
 **The proof is omitted** because it involves a bit more linear algebra than we want to wade into for the moment.
 
