@@ -159,7 +159,7 @@ and $\mathbf{y}$ is optimal for $\mathcal{L}'$ if and only if
 $$(\clubsuit) \quad (\mathbf{b} - A\mathbf{x})^T \cdot \mathbf{y} = 0 \quad \text{and} \quad (\mathbf{y}^TA - \mathbf{c}) \cdot \mathbf{x} = 0.$$
 
 **Remark:** The Theorem can be formulated in terms of the so-called *slack variables* $z_i$ $1 \le i \le r$ which may be defined by the equation
-$$\begin{bmatrix} z_1 \\ z_2 \\ \vdots \\ z_r \end{bmatrix} = \mathbf{z} = \mathbf{b} - A^T \cdot \mathbf{x}$$
+$$\begin{bmatrix} z_1 \\ z_2 \\ \vdots \\ z_r \end{bmatrix} = \mathbf{z} = \mathbf{b} - A \cdot \mathbf{x}$$
 (and the dual slack variables...)
 
 **Sketch of proof** (of complementary slackness):
