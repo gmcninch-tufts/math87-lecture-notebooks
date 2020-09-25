@@ -288,7 +288,7 @@ $$A \cdot \mathbf{x} \le \mathbf{b}  = \begin{bmatrix} b_1 \\ b_2 \\ \vdots \\ b
 ## Standard Form
 
 Recapitulating, a **linear programming problem** is determined by the
-number $n$ of variables, the choice of a vectors $\mathbf{c},
+number $n$ of variables, the choice of vectors $\mathbf{c},
 \mathbf{a}_1, \mathbf{a}_2,\cdots,\mathbf{a}_r \in \mathbf{R}^{1
 \times n}$ and the choice of scalars $b_1,\dots,b_r$.
 
