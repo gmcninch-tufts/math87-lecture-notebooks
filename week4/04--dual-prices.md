@@ -34,14 +34,19 @@ $(\mathbf{c} \in \mathbb{R}^{1 \times n},A \in \mathbb{R}^{r \times n}, \mathbf{
 As usual we'll write $\mathcal{L}'$ for the dual linear program -- it is determined by the triple $(\mathbf{b}^T,A^T,\mathcal{c}^T)$ and we write
 $\mathbf{y} \in \mathbf{R}^r$ for the dual variables.
 
-*Complementary slackness* is the assertion that for feasilbe points $\mathbf{x}$ for $\mathcal{L}$ and $\mathbf{y}$ for $\mathcal{L}'$, $\mathbf{x}$ is optimal for $\mathcal{L}$ and $\mathbf{y}$ is optimal for $\mathcal{L}'$ if and only if
+*Complementary slackness* is the assertion that for feasible points $\mathbf{x}$ for $\mathcal{L}$ and $\mathbf{y}$ for $\mathcal{L}'$, $\mathbf{x}$ is optimal for $\mathcal{L}$ and $\mathbf{y}$ is optimal for $\mathcal{L}'$ if and only if
 
 $$(\clubsuit) \quad (\mathbf{b} - A\mathbf{x})^T \cdot \mathbf{y} = 0 \quad \text{and} \quad (\mathbf{y}^TA - \mathbf{c}) \cdot \mathbf{x} = 0.$$
 
 For optimal vectors $\mathbf{x}^*$ and $\mathbf{y}^*$ we refer to the slack vectors:
 
-$$(\mathbf{b} - A\mathbf{x}) \quad \text{and} \quad (\mathbf{y}^TA - \mathbf{c})$$
+$$(\mathbf{b} - A\mathbf{x}^*) \quad \text{and} \quad ((\mathbf{y}^*)^TA - \mathbf{c})$$
 
+**Remark**: Recall that if $\mathbf{x}$ is a feasible point for $\mathcal{L}$, then $A \mathbf{x} \le \mathbf{b}$ or put another way, the slack vector $\mathbf{b} - A\mathbf{x} \ge \mathbf{0}$ is non-negative. Now, if also $\mathbf{y} \ge \mathbf{0}$, it is easy to see that the product -- a scalar quantity -- satisfies
+
+$$(\mathbf{b} - A\mathbf{x})^T\cdot \mathbf{y} \ge 0$$ 
+
+and that in order to have $(\mathbf{b} - A\mathbf{x})^T\cdot \mathbf{y} = 0$ for a non-zero vector $\mathbf{y}$, some of the coefficients of $\mathbf{b} - A\mathbf{x}$ must be zero; in the discussion below we say that those coefficients - or the corresponding constraints -- are *binding*.
 
 
 Example 
@@ -80,7 +85,7 @@ y_l \\ y_c \\ y_b
 So the objective function for the dual system is given by
 $$\mathbf{b}^T \cdot \begin{bmatrix}
 y_l \\ y_b \\ y_c
-\end{bmatrix} = 100y_l + 12000y_c + + 13000y_b$$ 
+\end{bmatrix} = 100y_l + 12000y_b + 13000y_c$$ 
 and the inequality constraints are given by
 $$A^T \cdot  \begin{bmatrix}
 y_l \\ y_b \\ y_c
@@ -98,8 +103,8 @@ primal = linprog((-1)*c,A_ub = A,b_ub = b)
 
 dual = linprog(b,A_ub = (-1)*A.T,b_ub = (-1)*c)
 
-print("primal\n",primal,"\n")
-print("dual\n",dual)
+print("** primal:\n",primal,"\n\n-----------\n\n")
+print("** dual:\n",dual)
 ```
 
 So ``scipy`` confirms that the optimal solution  to the primal linear system is
@@ -152,7 +157,7 @@ Understanding the dual prices
 =============================
 Let's try to understand the meanining of the dual prices in this case.
 The *dual price lemma* -- see the slide below -- shows that -- roughly speaking -- the dual price
-predicts the change in the objective function if the right-hand side of the constraint function changes by 1.
+predicts the change in the objective function if the right-hand side of the constraint inequality changes by 1.
 
 Imagine that the owner of 15 lots adjacent to the development describe above offers to sell them for \\$60,000 total. Should you buy them?
 
@@ -182,7 +187,7 @@ primal_tweaked = linprog((-1)*c,A_ub = A,b_ub = bprime)
 
 dual_tweaked   = linprog(bprime,A_ub = (-1)*A.T,b_ub = (-1)*c)
 
-[primal_tweaked.x, primal_tweaked.slack, dual_tweaked.x]
+[primal_tweaked.x, primal_tweaked.fun, primal_tweaked.slack, dual_tweaked.x]
 ```
 
 As a final comment, one can recompute the slack vector for the "new" linear program (with $C+R \le 115$) - one now finds no slack at all in either of the labor contraints (so they are both *binding*), but there is now slack in the *lot* constraint, which reflects an "oversupply" of lots.

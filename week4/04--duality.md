@@ -160,7 +160,8 @@ $$(\clubsuit) \quad (\mathbf{b} - A\mathbf{x})^T \cdot \mathbf{y} = 0 \quad \tex
 
 **Remark:** The Theorem can be formulated in terms of the so-called *slack variables* $z_i$ $1 \le i \le r$ which may be defined by the equation
 $$\begin{bmatrix} z_1 \\ z_2 \\ \vdots \\ z_r \end{bmatrix} = \mathbf{z} = \mathbf{b} - A \cdot \mathbf{x}$$
-(and the dual slack variables...)
+
+(There the dual slack variables are defined in the same way). We'll revisit the slack variables in our discussion of *dual prices* in a subsequent notebook.
 
 **Sketch of proof** (of complementary slackness):
 Since $\mathbf{x}$ and $\mathbf{y}$ are feasible, the weak duality Theorem tells us that
