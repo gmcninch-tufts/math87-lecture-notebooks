@@ -348,7 +348,7 @@ Example: eliminating equality constraints
 
 A simple example should illustrate the idea just described
 
-Consider the linear program in 2 variables $x,y$ which seekes to minimize
+Consider the linear program in 2 variables $x,y$ which seeks to minimize
 the value of the function given by $\mathbf{c} = \begin{bmatrix} c_1 & c_2 \end{bmatrix}$
 subject to the constraints:
 - $\mathbf{0} \le \mathbf{x} = \begin{bmatrix} x \\ y \end{bmatrix}$
