@@ -1,6 +1,7 @@
 ---
 jupyter:
   jupytext:
+    formats: ipynb,md
     text_representation:
       extension: .md
       format_name: markdown
@@ -51,7 +52,7 @@ Variables:
 - $b_i$ = # tablecloths bought on day $i$, $1 ≤ i ≤ 7$.
 - $f_i$ = # dirty tablecloths sent to fast laundry on day $i$
 - $s_i$ = # dirty tablecloths sent to slow laundry on day $i$
-- $t_i$ = # tablecloths needed on day $i$.
+- $t_i$ = # tablecloths used on day $i$.
 
 First, let’s write down the objective (assuming we only care about week 1):
 
@@ -166,14 +167,14 @@ Since we are to have one variable for each arrow in the above diagram,
 
 - $b_i$ = # tablecloths bought on day $i, 1 ≤ i ≤ 7$.
 - $u_i$ = # tablecloths used on day $i, 1 ≤ i ≤ 7$.
-- $c_i$ = # tablecloths carried over from day $i$ to $i + 1$.
+- $c_i$ = # tablecloths carried over from day $i$ to $i + 1$ for $0 \le i \le 6$
 - $f_i$ = # dirty tablecloths sent to fast laundry on day $i$
 - $s_i$ = # dirty tablecloths sent to slow laundry on day $i$
 - $t_i$ = # tablecloths needed on day $i$.
 
 Now the objective equation has the form:
 
-$$5\sum_{i=1}^7 b_i + 0 \sum_{i=1}^7 u_i + 0 \sum_{i=1}^7 c_i + 2 \sum_{i=1}^6 f_i + \sum_{i=1}^5 s_i$$
+$$5\sum_{i=1}^7 b_i + 0 \sum_{i=1}^7 u_i + 0 \sum_{i=1}^6 c_i + 2 \sum_{i=1}^6 f_i + \sum_{i=1}^5 s_i$$
 
 We require $t_i \le u_i$ for $1 \le i \le 7$ (lower bounds). These lower bounds arise from the arrows from "Day i clean" to "Day i used" with the label $\ell = t_i$. 
 
@@ -194,12 +195,12 @@ Note for example that 2 arrows leave and 3 arrows arrive at the node "Day 2 clea
 
 Remarks:
 --------
-- There are $3 \times 7 + 6 + 5 = 32$ variables. So the objective function is given by a vector $\mathbf{c} \in \mathbb{R}^{32} = \mathbb{R}^{1 \times 32}$.
+- There are $2 \times 7 + 2 \times 6 + 5 = 31$ variables. So the objective function is given by a vector $\mathbf{c} \in \mathbb{R}^{31} = \mathbb{R}^{1 \times 31}$.
 
-- there are 14 "equality constraints" arising from the conservation equation at each node. Thus the equality constraints are given by a $14 \times 32$ matrix $A$ (they amount to the condition
-$A\mathbf{x} = \mathbf{0}$ for $\mathbf{x} \in \mathbb{R}^{32} = \mathbb{R}^{32 \times 1}$).
+- there are 13 "equality constraints" arising from the conservation equation at each node (note that there is no conservation at the node "day 7 used", since it is a terminal node). Thus the equality constraints are given by a $13 \times 31$ matrix $A$ (they amount to the condition
+$A\mathbf{x} = \mathbf{0}$ for $\mathbf{x} \in \mathbb{R}^{31} = \mathbb{R}^{31 \times 1}$).
 
-- there are 7 inequality constraints, given by the condition $B \mathbf{x} \le \mathbf{b}$ for a $7 \times 32$ matrix $B$ and a vector $\mathbf{b} \in \mathbb{R}^7 = \mathbb{R}^{7 \times 1}$.
+- there are 7 inequality constraints, given by the condition $B \mathbf{x} \le \mathbf{b}$ for a $7 \times 31$ matrix $B$ and a vector $\mathbf{b} \in \mathbb{R}^7 = \mathbb{R}^{7 \times 1}$.
 
 
 
@@ -240,29 +241,158 @@ $$\mathbf{cc} = -\mathbf{e}_2, \mathbf{ff} = \mathbf{e}_2,\mathbf{ss} = \mathbf{
 ```python
 import numpy as np
 
-def e(index):
-    return np.array([1.0 if i == index else 0.0 for i in range(7)])
+def sbv(index,length):
+    return np.array([1.0 if i == index-1 else 0.0 for i in range(length)])
 
 ## produce the row corresponding to the "day 3 clean" node.
 ##
-row = np.concatenate(((-1)*e(3), ## bb
-                     e(3),       ## uu
-                     (-1)*e(2),  ## cc
-                     e(2),       ## ff
-                     e(1),       ## ss
-                     np.zeros(7) ## tt
-                    ))
+row = np.block([(-1)*sbv(3,7), ## bb
+                 sbv(3,7),       ## uu
+                 (-1)*sbv(2,7),  ## cc
+                 sbv(2,7),       ## ff
+                 sbv(1,7),       ## ss
+                 np.zeros(7) ## tt
+               ])
 
 
-## Note that if you had rows row1, row2, row3, ..., row7, you'd produce the matrix A via
+## Note that if you had constructed the following rows -- row1, row2, row3, ..., row7 -- you'd produce the matrix A via
 ## A = np.array([row1,row2,row3,...,row7])
 
 print(row)
 ```
 
+--------------
+
+```python
+
+import numpy as np
+from scipy.optimize import linprog
+
+float_formatter = "{:.2f}".format
+np.set_printoptions(formatter={'float_kind':float_formatter})
+
+## "standard basis vector"
+##
+def sbv(index,size):
+    return np.array([1.0 if i == index-1 else 0.0 for i in range(size)])
+
+def from_indices(dat,length):
+    ## dat is a list [(c,i).,,,] of pairs; the pair (c,i) determines
+    ## the vector c*e_i where e_i is the ith standard basis vector
+    return sum([c*sbv(i,length) for (c,i) in dat],np.zeros(length))
+
+## >>> from_indices(2,[3,4],7)
+## array([ 0.,  0., 2., 2.,  0.,  0.,  0.])
+
+def row(b=[],
+        u=[],
+        c=[],
+        f=[],
+        s=[]):
+    bb = from_indices(b,7)
+    uu = from_indices(u,7)
+    cc = from_indices(c,6)
+    ff = from_indices(f,6)
+    ss = from_indices(s,5)
+    return np.block([bb,uu,cc,ff,ss])
+
+## >>> row(bp=[1],un=[2])
+## array([ 1.,  0.,  0.,  0.,  0.,  0.,  0.,  0., -1.,  0.,  0.,  0.,  0.,
+##        0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,
+##        0.,  0.,  0.,  0.,  0.])
+##
+## this result has a 1 in the "1st entry of the b-group" and a -1 in
+## the "2nd entry of the u-group"
+
+
+## here is a textual description of the "equality constraint" matrix.
+## We then proceed to implement this description via the functions defind above.
+##
+## day1 clean: b1 - u1 - c1 = 0
+## day2 clean: b2 + c1 + f1 - u2 - c2 = 0
+## day3 clean: b3 + c2 + s1 + f2 - u3 - c3 = 0
+## day4 clean: b4 + c3 + s2 + f3 - u4 - c4 = 0
+## day5 clean: b5 + c4 + s3 + f4 - u5 - c5 = 0
+## day6 clean: b6 + c5 + s4 + f5 - u6 - c6 = 0
+## day7 clean: b7 + c6 + s5 + f6 - u7 = 0
+
+## day1 used:  u1 - s1 - f1  = 0
+## day2 used:  u2 - s2 - f2  = 0
+## day3 used:  u3 - s3 - f3  = 0
+## day4 used:  u4 - s4 - f4  = 0
+## day5 used:  u5 - s5 - f5  = 0
+## day6 used:  u6 - f6   = 0
+
+## Note that day7 used is a "terminal node" so doesn't have a conservation equation.
+
+## the rc are rows corresponding to conservation laws for "clean" nodes
+
+rc1 = row(b=[(1,1)],c=[(-1,1)],                   u=[(-1,1)])
+rc2 = row(b=[(1,2)],c=[(1,1),(-1,2)],          f=[(1,1)],u=[(-1,2)])
+rc3 = row(b=[(1,3)],c=[(1,2),(-1,3)],s=[(1,1)],f=[(1,2)],u=[(-1,3)])
+rc4 = row(b=[(1,4)],c=[(1,3),(-1,4)],s=[(1,2)],f=[(1,3)],u=[(-1,4)])
+rc5 = row(b=[(1,5)],c=[(1,4),(-1,5)],s=[(1,3)],f=[(1,4)],u=[(-1,5)])
+rc6 = row(b=[(1,6)],c=[(1,5),(-1,6)],s=[(1,4)],f=[(1,5)],u=[(-1,6)])
+rc7 = row(b=[(1,7)],c=[(1,6),(-1,7)],s=[(1,5)],f=[(1,6)],u=[(-1,7)])
+
+## the ru are rows corresponding to conservation laws for "used" nodes
+
+ru1 = row(u=[(1,1)],s=[(-1,1)],f=[(-1,1)])
+ru2 = row(u=[(1,2)],s=[(-1,2)],f=[(-1,2)])
+ru3 = row(u=[(1,3)],s=[(-1,3)],f=[(-1,3)])
+ru4 = row(u=[(1,4)],s=[(-1,4)],f=[(-1,4)])
+ru5 = row(u=[(1,5)],s=[(-1,5)],f=[(-1,5)])
+ru6 = row(u=[(1,6)],           f=[(-1,6)])
+
+## the rc and ru determined the rows of the matrix defining 
+
+Aeq = np.array([rc1,rc2,rc3,rc4,rc5,rc6,rc7,
+                ru1,ru2,ru3,ru4,ru5,ru6])
+
+
+Alb = np.array([row(u=[(1,i)]) for i in range(1,8)])
+
+## objective function
+c = row(b=[(5,1),(5,2),(5,3),(5,4),(5,5),(5,6),(5,7)],
+        f=[(2,1),(2,2),(2,3),(2,4),(2,5),(2,6)],
+        s=[(1,1),(1,2),(1,3),(1,4),(1,5)])
+
+
+tt = np.array([10,10,15,20,40,40,30]) ## these are the ti entries taken from the "tablecloths needed" table
+
+
+## use linprog to find the point which minimizes the objective function
+## we impose equality constraints  Aeq*x=0.
+## we also want the inequality constraint Ax >= tt, so we use -Ax <= -tt.
+result = linprog(c,A_eq=Aeq,b_eq=np.zeros(13),A_ub=(-1)*Alb,b_ub=(-1)*tt)
+
+def report(result):
+    x = result.x
+    costs = result.fun
+    return "\n".join(
+        [f"linprog succeeded? {result.success}"]
+        +
+        [f"Optimal costs on tablecloths for the week are ${costs:.2f}"]
+        + 
+        ["This is achieved by the following strategy:\n"]
+        +
+        [f"purchase on day {i+1}: {x[i]:.2f}" for i in range(7)]
+        + [""]
+        + [f"use on day {i+1}: {x[7+i]:.2f}" for i in range(7)]
+        + [""]
+        + [f"carry over from day {i+1} to day {i+2}: {x[14+i]:.2f}" for i in range(6)]
+        + [""]        
+        + [f"to fast laundry on day {i+1}: {x[20+i]:.2f}" for i in range(6)]
+        + [""]        
+        + [f"to slow laundry on day {i+1}: {x[26+i]:.2f}" for i in range(5)])
+
+print(report(result))
+```
+
 <!-- #region -->
 ----
-The idea is that "network flow" graphs are a tool to help formulate the linear program. Let's look 
+The idea is that "network flow" graphs are a tool to help formulate the linear program. 
+Here is another example.
 
 
 Grocery example
@@ -333,6 +463,9 @@ dot.edge('mar','d',label='[1.20,10000,10000]')
 
     
 dot
+
+dot.format='png'
+dot.render()
 ```
 
 Now let's formulate the linear program.
