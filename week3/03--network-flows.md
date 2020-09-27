@@ -477,8 +477,8 @@ dot.edge('mar','d',label='[1.20,10000,10000]')
     
 dot
 
-dot.format='png'
-dot.render()
+##dot.format='png'
+##dot.render()
 ```
 
 Now let's formulate the linear program.
