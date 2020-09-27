@@ -46,31 +46,44 @@ Your expected tablecloth demands are:
 | :--                | :-- | :-- | :-- | :-- | :-- | :-- | :-- |
 | tablecloths needed |  10 |  10 |  15 |  20 |  40 |  40 |  30 |
 
-Let’s formulate a linear program to minimize the costs.
-Variables:
+Let’s try to formulate a linear program to minimize the costs.
+
+Let's name the quantities from the table.
+- $t_i$ = expected # of tablecloths required on day $i$.
+
+Now introduce variables:
 
 - $b_i$ = # tablecloths bought on day $i$, $1 ≤ i ≤ 7$.
 - $f_i$ = # dirty tablecloths sent to fast laundry on day $i$
 - $s_i$ = # dirty tablecloths sent to slow laundry on day $i$
-- $t_i$ = # tablecloths needed on day $i$.
 
 First, let’s write down the objective (assuming we only care about week 1):
 
 The goal is to minimize the quantity
 $$5 \sum_{i=1}^7 b_i + 2\sum_{i=1}^6 f_i + \sum_{i=1}^5 s_i$$
 
-What are the constraints?
+What are the constraints? On day $i$, we must have at least $t_i$ tablecloths available.
 
 - day 1
-  - we need enough tablecloths for day 1, so $t_1 \le b_1$
-  - we can't clean more than we've used: $f_1 + s_1 \le t_1$.
+
+  - we need enough tablecloths for day 1, so 
+  $$t_1 \le b_1$$
+
 - day 2
-  - demand must be met from purchases on day 2, plus surplus from day 1, plus fast laundry from day 1:
-  $$t_2 \le b_2  + (b_1 - t_1) + f_1$$
+
+  - demand must be met from purchases on day 2, plus surplus from day 1, plus fast laundry from day 1.
+    note that the *use* on day 1 is equal to $f_1 + s_1$ and thus $b_1 - f_1 - s_1$ 
+    counts the surplus from day 1. So we need
+    
+  $$t_2 \le b_2  + (b_1 - f_1 - s_1) + f_1$$
+
 - day 3
-  - demand again met from purchases on day 3, plus leftover from the previous days, plus
-those laundered from the fast service on day 2, and those laundered via the slow service on day 1
-  $$t_3 \le b_3 + (b_2 + (b_1 − t_1 ) + f_1 ) − t_2 + f_2 + s_1$$
+
+  - demand must again be met from purchases on day 3, plus leftover from the previous days, plus
+    those laundered from the fast service on day 2, and those laundered via the slow service on day 1.
+    The total used in the first two days is equal to $f_1 + s_1 + f_2 + s_2$, so the surplus
+    from the first two days is $b_1 + b_2 - f_1 - s_1 - f_2 - s_2$. So we need
+  $$t_3 \le b_3 + (b_1 + b_2 - f_1 - s_1 - f_2 - s_2) + f_2 + s_1$$
 
 etc.
 
