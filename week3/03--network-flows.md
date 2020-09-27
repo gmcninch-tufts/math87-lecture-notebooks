@@ -52,7 +52,7 @@ Variables:
 - $b_i$ = # tablecloths bought on day $i$, $1 ≤ i ≤ 7$.
 - $f_i$ = # dirty tablecloths sent to fast laundry on day $i$
 - $s_i$ = # dirty tablecloths sent to slow laundry on day $i$
-- $t_i$ = # tablecloths used on day $i$.
+- $t_i$ = # tablecloths needed on day $i$.
 
 First, let’s write down the objective (assuming we only care about week 1):
 
