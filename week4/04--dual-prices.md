@@ -107,13 +107,13 @@ print("** primal:\n",primal,"\n\n-----------\n\n")
 print("** dual:\n",dual)
 ```
 
-So ``scipy`` confirms that the optimal solution  to the primal linear system is
+So ``scipy`` confirms that an optimal solution  to the primal linear system is
 
 $$\mathbf{x}^* = \begin{bmatrix} C \\ R \end{bmatrix} = \begin{bmatrix} 20 \\ 80 \end{bmatrix}$$
 
 Note that $\mathbf{c} \cdot \begin{bmatrix} 20 \\ 80 \end{bmatrix} = \$502,000$
 
-And the optimal solution to the dual linear system is
+And an optimal solution to the dual linear system is
 
 $$\mathbf{y}^* = \begin{bmatrix} y_l \\ y_b \\ y_c \end{bmatrix} = \begin{bmatrix} 4900 \\ 1 \\0\end{bmatrix}$$
 
@@ -204,13 +204,13 @@ Let's consider again a linear program $\mathcal{L}$ in standard form given by da
 
 Let $\Delta \mathbf{b} \in \mathbb{R}^r$ be a small perturbation of $\mathbf{b} \in \mathbb{R}^r$.
 
-**Lemma:** Suppose that $\mathbf{x}^*$ is the optimal solution to the linear program $\mathcal{L}$ and that $\mathbf{x}'$ is the optimal solution to the linear program
+**Lemma:** Suppose that $\mathbf{x}^*$ is an optimal solution to the linear program $\mathcal{L}$ and that $\mathbf{x}'$ is an optimal solution to the linear program
 $\mathcal{L}_\Delta$ given by the data $(\mathbf{c},A,\mathbf{b} + \Delta \mathbf{b})$.
 Then 
 
 $$\mathbf{c} \cdot \mathbf{x'} \le \mathbf{c} \cdot \mathbf{x}^* + \Delta \mathbf{b}^T \cdot \mathbf{y}^*$$
 
-where $\mathbf{y}^*$ is the optimal solution to the dual linear system $\mathcal{L}'$.
+where $\mathbf{y}^*$ is an optimal solution to the dual linear system $\mathcal{L}'$.
 
 
 **Remark** One can actually prove equality in the lemma provided that
@@ -218,7 +218,7 @@ the perturbation $\Delta \mathbf{b}$ vector is "small enough".
 
 **Proof of Lemma:**
 
-Note that the constraints of the unaltered dual $\mathcal{L}'$ are the same as those of the altered dual $\mathcal{L}_a'$. Thus, the optimal solution $\mathbf{y}^*$ for $\mathcal{L}'$ is at least feasible for $\mathcal{L}_a'$.
+Note that the constraints of the unaltered dual $\mathcal{L}'$ are the same as those of the altered dual $\mathcal{L}_a'$. Thus, an optimal solution $\mathbf{y}^*$ for $\mathcal{L}'$ is at least feasible for $\mathcal{L}_a'$.
 
 So we may apply the weak duality theorem to see that
 

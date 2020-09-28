@@ -189,7 +189,7 @@ Conversely, given $(\clubsuit)$ the preceding calculations show that equality ho
 -------------
 
 These results and ideas allow us to use "play the primal or dual linear program off one another" 
-to try to find the optimal solution.
+to try to find an optimal solution.
 
 We'll eventually see some useful application!!
 <!-- #endregion -->
