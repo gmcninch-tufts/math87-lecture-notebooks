@@ -176,14 +176,20 @@ The above diagram represents a *directed graph*. The edges in this graph -- i.e.
 
 
 <!-- #region -->
+Remember that we write
+
+- $t_i$ = # tablecloths needed on day $i$.
+
+(these aren't *variables* for our linear program -- they are values given to us).
+
 Since we are to have one variable for each arrow in the above diagram,
 
 - $b_i$ = # tablecloths bought on day $i, 1 ≤ i ≤ 7$.
 - $u_i$ = # tablecloths used on day $i, 1 ≤ i ≤ 7$.
 - $c_i$ = # tablecloths carried over from day $i$ to $i + 1$ for $0 \le i \le 6$
-- $f_i$ = # dirty tablecloths sent to fast laundry on day $i$
-- $s_i$ = # dirty tablecloths sent to slow laundry on day $i$
-- $t_i$ = # tablecloths needed on day $i$.
+- $f_i$ = # dirty tablecloths sent to fast laundry on day $i$ for $0 \le i \le 6$
+- $s_i$ = # dirty tablecloths sent to slow laundry on day $i$ for $0 \le i \le 5$
+
 
 Now the objective equation has the form:
 
@@ -208,7 +214,7 @@ Note for example that 2 arrows leave and 3 arrows arrive at the node "Day 2 clea
 
 Remarks:
 --------
-- There are $2 \times 7 + 2 \times 6 + 5 = 31$ variables. So the objective function is given by a vector $\mathbf{c} \in \mathbb{R}^{31} = \mathbb{R}^{1 \times 31}$.
+- There are $2 \times 7 + 2 \times 6 + 5 = 31$ variables. So the objective function is given by a vector $\mathbf{c} \in \mathbb{R}^{1 \times 31}$.
 
 - there are 13 "equality constraints" arising from the conservation equation at each node (note that there is no conservation at the node "day 7 used", since it is a terminal node). Thus the equality constraints are given by a $13 \times 31$ matrix $A$ (they amount to the condition
 $A\mathbf{x} = \mathbf{0}$ for $\mathbf{x} \in \mathbb{R}^{31} = \mathbb{R}^{31 \times 1}$).
@@ -234,24 +240,36 @@ results in a *row* of the matrix $A$.
 Let's order the variables as follows: 
 $$b_1,b_2,\dots,b_7,u_1,\dots,u_7,c_1,\dots,c_7,f_1,\dots,f_7,s_1,\dots,s_7,t_1,\dots,t_7$$
 
-With this order, the "day 3 clean" node leads to the following column of $A$:
+As an example, lets represent the row of $A$ corresponding to the conservation law associated with the "day 3 clean" node (with the above ordering of the variables). We write this row in the following form:
 
-$$\begin{bmatrix}
-    \mathbf{bb} & \mathbf{uu} & \mathbf{cc} & \mathbf{ff} & \mathbf{ss} & \mathbf{tt} \\
-  \end{bmatrix}$$
+$$(\heartsuit) \quad \begin{bmatrix}
+    \mathbf{\widetilde b} & \mathbf{\widetilde u} & \mathbf{\widetilde c} & \mathbf{\widetilde f} & \mathbf{\widetilde s} \\
+  \end{bmatrix} \in \mathbb{R}^{1 \times 31}$$
 
-where $\mathbf{bb},\mathbf{uu},\mathbf{cc},\mathbf{ff},\mathbf{ss},\mathbf{tt} \in \mathbb{R}^{1 \times 7}$
-and we have
+where 
 
-$$\mathbf{bb} = \begin{bmatrix}
+$$\mathbf{\widetilde b},\mathbf{\widetilde u} \in \mathbb{R}^{1 \times 7}, \quad \mathbf{\widetilde c},\mathbf{\widetilde f} \in \mathbb{R}^{1 \times 6}, \quad \mathbf{\widetilde s} \in \mathbb{R}^{1 \times 5},$$
+
+the row vector $(\heartsuit)$ is to be understood as obtained by "*concatenation*" of these vectors,
+and we have:
+
+$$\mathbf{\widetilde b} = \begin{bmatrix}
 0 & 0 & -1 & 0 & 0 & 0 & 0
-\end{bmatrix} = -\mathbf{e}_3, \quad \mathbf{uu} = \begin{bmatrix}
-0 & 0 & 1 & 0 & 0 & 0 & 0 
-\end{bmatrix} = \mathbf{e}_3,
-$$
-$$\mathbf{cc} = -\mathbf{e}_2, \mathbf{ff} = \mathbf{e}_2,\mathbf{ss} = \mathbf{e}_1,\mathbf{tt} =\mathbf{0}$$
+\end{bmatrix} = -\mathbf{e}_3, \quad \mathbf{\widetilde u} = \mathbf{e}_3,$$
+
+$$\mathbf{\widetilde c} =  \begin{bmatrix}
+0 & -1 & 0 & 0 & 0 & 0 
+\end{bmatrix} = -\mathbf{e}_2, \quad  \mathbf{\widetilde f} = \begin{bmatrix}
+0 & 1 & 0 & 0 & 0 
+\end{bmatrix} = \mathbf{e}_2, \quad\mathbf{\widetilde s} = \mathbf{e}_1$$
+
+(here $\mathbf{e}_i$ represents the appropriate standard basis vector in $\mathbb{R}^7$, $\mathbb{R}^6$ or $\mathbb{R}^5$).
 
 ```python
+## This code represents a preliminary implementation
+## it just gives the row in the equality constraint corresponding
+## to a single row. See the next cell for a "full implementation"
+
 import numpy as np
 
 def sbv(index,length):
@@ -267,7 +285,6 @@ row = np.block([(-1)*sbv(3,7), ## bb
                  np.zeros(7) ## tt
                ])
 
-
 ## Note that if you had constructed the following rows -- row1, row2, row3, ..., row7 -- you'd produce the matrix A via
 ## A = np.array([row1,row2,row3,...,row7])
 
@@ -277,6 +294,8 @@ print(row)
 --------------
 
 ```python
+## This cell represents one possible way of creating the equality and inquality constraints
+## for the "tablecloth" problem
 
 import numpy as np
 from scipy.optimize import linprog
@@ -292,10 +311,12 @@ def sbv(index,size):
 def from_indices(dat,length):
     ## dat is a list [(c,i).,,,] of pairs; the pair (c,i) determines
     ## the vector c*e_i where e_i is the ith standard basis vector
+    ## from_indices(dat,length) function returns the sum of the vectors 
+    ## specified by the list dat
     return sum([c*sbv(i,length) for (c,i) in dat],np.zeros(length))
 
-## >>> from_indices(2,[3,4],7)
-## array([ 0.,  0., 2., 2.,  0.,  0.,  0.])
+## >>> from_indices([(2,3),(3.5,6)],7)
+## array([ 0.,  0., 2., 0.,  0.,  3.5,  0.])
 
 def row(b=[],
         u=[],
@@ -319,7 +340,8 @@ def row(b=[],
 
 
 ## here is a textual description of the "equality constraint" matrix.
-## We then proceed to implement this description via the functions defind above.
+## We then proceed to implement this description using the function `row` 
+## defined above.
 ##
 ## day1 clean: b1 - u1 - c1 = 0
 ## day2 clean: b2 + c1 + f1 - u2 - c2 = 0
@@ -380,6 +402,9 @@ tt = np.array([10,10,15,20,40,40,30]) ## these are the ti entries taken from the
 result = linprog(c,A_eq=Aeq,b_eq=np.zeros(13),A_ub=(-1)*Alb,b_ub=(-1)*tt)
 
 def report(result):
+    ## the argument ``result`` should be an instance of the class ``scipy.optimize.OptimizeResult`` -- 
+    ## i.e. a value of the form returned by ``linprog``
+    ##
     x = result.x
     costs = result.fun
     return "\n".join(
@@ -390,14 +415,22 @@ def report(result):
         ["This is achieved by the following strategy:\n"]
         +
         [f"purchase on day {i+1}: {x[i]:.2f}" for i in range(7)]
-        + [""]
-        + [f"use on day {i+1}: {x[7+i]:.2f}" for i in range(7)]
-        + [""]
-        + [f"carry over from day {i+1} to day {i+2}: {x[14+i]:.2f}" for i in range(6)]
-        + [""]        
-        + [f"to fast laundry on day {i+1}: {x[20+i]:.2f}" for i in range(6)]
-        + [""]        
-        + [f"to slow laundry on day {i+1}: {x[26+i]:.2f}" for i in range(5)])
+        + 
+        [""]
+        + 
+        [f"use on day {i+1}: {x[7+i]:.2f}" for i in range(7)]
+        + 
+        [""]
+        + 
+        [f"carry over from day {i+1} to day {i+2}: {x[14+i]:.2f}" for i in range(6)]
+        + 
+        [""]        
+        + 
+        [f"to fast laundry on day {i+1}: {x[20+i]:.2f}" for i in range(6)]
+        + 
+        [""]        
+        + 
+        [f"to slow laundry on day {i+1}: {x[26+i]:.2f}" for i in range(5)])
 
 print(report(result))
 ```
@@ -700,6 +733,9 @@ def month(i):
     return dict[i]
 
 def report(res):
+    ## the argument ``res`` should be an instance of the class ``scipy.optimize.OptimizeResult`` -- 
+    ## i.e. a value of the form returned by ``linprog``
+    ##
     x=res.x
     profit  = (-1)*result.fun
     return "\n".join([f"linprog succeeded? {result.success}"]
