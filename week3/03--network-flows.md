@@ -471,12 +471,12 @@ dot.edge('oct','nov',label='[-0.025,50K,0]')
 dot.edge('feb','mar',label='[-0.025,50K,0]')
 
 
-dot.edge('aug','d',label='[0.9,0,10000]')
-dot.edge('sep','d',label='[0.65,0,15000]')
-dot.edge('oct','d',label='[0.65,0,15000]')
-dot.edge('nov','d',label='[0.85,0,15000]')
-dot.edge('feb','d',label='[1.20,0,10000]')
-dot.edge('mar','d',label='[1.20,0,10000]')
+dot.edge('aug','d',label='[0.9,10000,0]')
+dot.edge('sep','d',label='[0.65,15000,0]')
+dot.edge('oct','d',label='[0.65,15000,0]')
+dot.edge('nov','d',label='[0.85,15000,0]')
+dot.edge('feb','d',label='[1.20,10000,0]')
+dot.edge('mar','d',label='[1.20,10000,0]')
 
     
 dot
@@ -547,13 +547,14 @@ We've also been told:
 This yields the upper bound
 - $s_i \le 50000$ for $1 \le i \le 12$
 
-Now, we know from table the demand for each month. Remember what we are doing: with the linear program, we are trying to decide the optimal values of our decision variables -- i.e. how many apples do we buy each month? and how many apples do we store each month? So our model should *plan* to meet demand; thus, we should impose the constraint that the number $d_i$ of ``kg`` of apples delivered to customers exceeds the demand. 
+Now, we know from table the demand for each month. Remember what we are doing: with the linear program, we are trying to decide the optimal values of our decision variables -- i.e. how many apples do we buy each month? and how many apples do we store each month? According to the model, the number of apples we expect to *sell* depends on these choices (via the conservation laws). So to be sensible, our model must view the anticipated demand (listed in the table) as an **upper bound** for the amount we can sell. More precisely, we should impose the constraint that the number $d_i$ of ``kg`` of apples delivered to customers is $\le$ the anticipated demand for each month. 
+(Of course, this is what the label on the diagram indicates! Here I'm trying to explain why we have chosen that labeling).
 
 This amount to the condition:
 $$\begin{bmatrix}
     d_1 \\ d_2 \\ d_3 \\ d_4 \\ d_5 \\ d_6 \\ 
     \end{bmatrix}
-    \ge 
+    \le 
     \begin{bmatrix}
        10 \\   
        15 \\ 
@@ -565,7 +566,7 @@ $$\begin{bmatrix}
     \begin{bmatrix}
     d_7 \\ d_8 \\ d_9 \\ d_{10} \\ d_{11} \\ d_{12}
     \end{bmatrix}
-    \ge 
+    \le 
     \begin{bmatrix}
     10 \\
     10 \\
@@ -637,19 +638,21 @@ def row(g=[],
     dd = from_indices(d,12)
     return np.block([gg,ss,dd])
 
-## for uniformity, we actually consider 12 storage variables
+## for uniformity, we actually consider 12 storage variables event though
+## we shouldn't really put anything in storage in july (month 12)
 
 ## let's form the equality constraint matrix from the conservation laws.
 
-A=np.array([row(s=[(1,1)],d=[(1,1)],g=[(-1,1)])] 
+A=np.array([row(s=[(1,1)],d=[(1,1)],g=[(-1,1)])]     # first row
            +
            [row(s=[(1,i),(-1,i-1)],
                 d=[(1,i)],
-                g=[(-1,i)]) for i in range(2,13)])
+                g=[(-1,i)]) for i in range(2,13)])   # remaining rows
 
 ## now let's make the inequality constraint matrix
 ## our inequality constraint will have the form Ax <= b,
-## so any "lower bound" constraints must be reversed using a sign change.
+## so any "lower bound" constraints would need to be reversed using a sign change.
+## But anyhow we haven't specified any lower bounds...
 
 Bs = [row(s=[(1,i)]) for i in range(1,13)]
 bs = np.array([50000 for i in range(1,13)])
@@ -661,7 +664,7 @@ Bg_end   = [row(g=[(1,i)]) for i in range(8,13)]
 
 Bg = Bg_start + Bg_end
      
-bg = np.array([15000,15000] + 5*[0])
+bg = np.array([15000,15000] + 5*[0])  # note that n*[0] is the list [0,0,...,0] with n zeros
 
 ## di bounds
 
@@ -698,22 +701,22 @@ def month(i):
 
 def report(res):
     x=res.x
-    profit  = result.fun
+    profit  = (-1)*result.fun
     return "\n".join([f"linprog succeeded? {result.success}"]
                      +
-                     [f"Optimal profit ${profit:.2f}"]
+                     [f"Optimal profit ${profit:,.2f}"]
                      + 
                      ["This is achieved by the following strategy:\n"]
                      +
-                     [f"purchase for {month(i+1)}: {x[i]:.2f}" for i in range(12)]
+                     [f"purchase in kg for {month(i+1)}: {x[i]:.2f}" for i in range(12)]
                      + 
                      [""]
                      + 
-                     [f"storage for {month(i+1)}: {x[i+12]:.2f}" for i in range(12)]
+                     [f"storage in kg for {month(i+1)}: {x[i+12]:.2f}" for i in range(12)]
                      + 
                      [""]                     
                      + 
-                     [f"sales for {month(i+1)}: {x[i+24]:.2f}" for i in range(12)])
+                     [f"sales in kg for {month(i+1)}: {x[i+24]:.2f}" for i in range(12)])
 
 print(report(result))
 
