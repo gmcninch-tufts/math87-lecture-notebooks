@@ -26,8 +26,7 @@ Course material (Week 4): Duality and linear programming
 Duality
 -------
 
-Consider a linear program $\mathcal{L}$ -- in *standard form* -- determined by data $(\mathbf{c} \in \mathbb{R}^{1 \times n},A \in \mathbb{R}^{r \times n},\mathbf{b} \in \mathbb{R}^r)$; 
-thus $\mathcal{L}$ seeks to optimize the value $\mathbf{c} \cdot \mathbf{x}$ of the *objective* function determined by
+Consider a linear program $\mathcal{L}$ -- in *standard form* -- determined by data $(\mathbf{c} \in \mathbb{R}^{1 \times n},A \in \mathbb{R}^{r \times n},\mathbf{b} \in \mathbb{R}^r)$ that seeks to ``maximize`` the value $\mathbf{c} \cdot \mathbf{x}$ of the *objective* function determined by
 $\mathbf{c} \in \mathbb{R}^{1 \times n}$. The inputs of this linear program are non-negative vectors $\mathbf{x} \in \mathbb{R}^n$, $\mathbf{x} \ge \mathbf{0}$, subject to inequality constraints $A \mathbf{x} \le \mathbf{b}$ determined by $A \in \mathbb{R}^{r \times n}$ and $\mathbf{b} \in \mathbb{R}^r$.
 
 We are going to associate to $\mathcal{L}$ a *new* linear program $\mathcal{L}'$. The linear program $\mathcal{L}'$ we are going to describe is called the *dual* linear program to $\mathcal{L}$; in this context, $\mathcal{L}$ is referred to as the *primal* linear program.
@@ -38,11 +37,9 @@ Definition of $\mathcal{L}'$
 -----------------------------
 
 The linear program $\mathcal{L}'$ dual to $\mathcal{L}$ is determined by the data
-$(\mathbf{b}^T,\mathbf{A}^T,\mathbf{c}^T)$; thus $\mathcal{L}$ seeks to optimize the value
-$\mathbf{b}^T \cdot \mathbf{y}$ -- note that $\mathbf{b}^T \in \mathbb{R}^{1 \times r}$ -- so in this case the variable is a non-negative vector $\mathbf{y} \in \mathbb{R}^r$, $\mathbf{y} \ge \mathbf{0}$
-subject to the inequality constraint $A^T \mathbf{y} \ge \mathbf{c}^T$.
-
-If the *primal* linear program $\mathcal{L}$ seeks to *minimize*/*maximize* the value $\mathbf{c} \cdot \mathbf{x}$ of its objective function, the dual linear program seeks to *maximize*/*minimize* the value $\mathbf{b}^T \cdot \mathbf{y}$ of its objective function, and 
+$(\mathbf{b}^T,\mathbf{A}^T,\mathbf{c}^T)$ and it seeks to ``minimize`` the value
+$\mathbf{b}^T \cdot \mathbf{y}$; note that $\mathbf{b}^T \in \mathbb{R}^{1 \times r}$ -- so in this case the variable is a non-negative vector $\mathbf{y} \in \mathbb{R}^r$, $\mathbf{y} \ge \mathbf{0}$
+subject to the inequality constraint $A^T \mathbf{y} \ge \mathbf{c}^T$ (note the direction of the inequality!).
 
 Speaking roughly, in the dual $\mathcal{L}'$, each of $\mathbf{c}$, $A$, and $\mathbf{b}$ have been replaced by their transpose, $\mathbf{c}$ and $\mathbf{b}$ have "swapped roles", and the inequality direction in the constraint has been reversed.
 
@@ -94,9 +91,17 @@ Dual of the dual?
 Recall that $\mathcal{L}$ is determined by $(\mathbf{c},A,\mathbf{b})$,
 and $\mathcal{L}'$ is determined by $(\mathbf{b}^T,\mathbf{A}^T,\mathbf{c}^T)$.
 
+We'd like to understand the dual of $\mathcal{L}'$. Of course, strictly speaking we haven't even *defined* the dual of $\mathcal{L}'$, because $\mathcal{L}'$ is a ``minimize``-ing linear program and speaking strictly we've only defined the dual for ``maximize``-ing linear programs (in standard form)!
+
+However, the task of finding an optimal solution to the linear program $\mathcal{L}'$ -- a ``minimize``-ing linear program --
+is equivalent to the task of finding an optimal solution to the linear program determined by $(-\mathbf{b}^T,-\mathbf{A}^T,-\mathbf{c}^T)$ which seeks to ``maximize`` its objective function subject to the constraint
+$-\mathbf{A}^T\mathbf{y} \le -\mathbf{c}^T$.
+
+
+
 Since $(B^T)^T = B$ for any matrix $B$,
-if we view $\mathcal{L}'$ as the primal linear program then its dual $(\mathcal{L}')'$
-is determined by $(\mathbf{c},A,\mathbf{b})$ and it is then clear that this dual $(\mathcal{L}')'$ identifies with $\mathcal{L}$.
+if we view $\mathcal{L}'$ as the primal linear program (with the preceding caveat for how to view it as a ``maximize``-ing linear program) then its dual $(\mathcal{L}')'$
+is determined by $(\mathbf{c},A,\mathbf{b})$ and it is then clear that the dual $(\mathcal{L}')'$ identifies with $\mathcal{L}$ (subject to the same caveat!).
 
 Succintly: the dual of the dual is the primal linear program.
 
@@ -188,10 +193,10 @@ Conversely, given $(\clubsuit)$ the preceding calculations show that equality ho
 
 -------------
 
-These results and ideas allow us to use "play the primal or dual linear program off one another" 
+These results and ideas allow us to "play the primal or dual linear program off one another" 
 to try to find an optimal solution.
 
-We'll eventually see some useful application!!
+In the next notebook, we'll see some useful application!!
 <!-- #endregion -->
 
 ```python

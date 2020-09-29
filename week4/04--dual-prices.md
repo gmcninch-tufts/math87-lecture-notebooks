@@ -29,10 +29,11 @@ Recollections
 Let's briefly recall the notion of *slack variables* and *complementary slackness* from our duality discussion.
 
 To this end, consider a linear program $\mathcal{L}$ given by
-$(\mathbf{c} \in \mathbb{R}^{1 \times n},A \in \mathbb{R}^{r \times n}, \mathbf{b} \in \mathbb{R}^r)$. We write $\mathbf{0} \le \mathbf{x} \in \mathbb{R}^n$ for the variable vector of our linear program.
+$(\mathbf{c} \in \mathbb{R}^{1 \times n},A \in \mathbb{R}^{r \times n}, \mathbf{b} \in \mathbb{R}^r)$ which seeks to ``maximize`` its objective function. We write $\mathbf{0} \le \mathbf{x} \in \mathbb{R}^n$ for the variable vector of our linear program, and we recall that it satisfies $A \mathbf{x} \le \mathbf{b}$.
 
-As usual we'll write $\mathcal{L}'$ for the dual linear program -- it is determined by the triple $(\mathbf{b}^T,A^T,\mathcal{c}^T)$ and we write
-$\mathbf{y} \in \mathbf{R}^r$ for the dual variables.
+As usual we'll write $\mathcal{L}'$ for the dual linear program -- it is determined by the triple $(\mathbf{b}^T,A^T,\mathcal{c}^T)$; it seeks to ``minimize`` its objective function; the dual varible vector is written
+$\mathbf{y} \in \mathbf{R}^r$ and it satisfies $\mathbf{y} \ge \mathbf{0}$ and
+$A^T\mathbf{y} \ge \mathbf{c}^T$.
 
 *Complementary slackness* is the assertion that for feasible points $\mathbf{x}$ for $\mathcal{L}$ and $\mathbf{y}$ for $\mathcal{L}'$, $\mathbf{x}$ is optimal for $\mathcal{L}$ and $\mathbf{y}$ is optimal for $\mathcal{L}'$ if and only if
 
