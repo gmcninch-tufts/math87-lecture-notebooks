@@ -238,9 +238,9 @@ For example, the conservation at the node
 results in a *row* of the matrix $A$.
 
 Let's order the variables as follows: 
-$$b_1,b_2,\dots,b_7,u_1,\dots,u_7,c_1,\dots,c_7,f_1,\dots,f_7,s_1,\dots,s_7,t_1,\dots,t_7$$
+$$b_1,b_2,\dots,b_7,u_1,\dots,u_7,c_1,\dots,c_6,f_1,\dots,f_6,s_1,\dots,s_5$$
 
-As an example, lets represent the row of $A$ corresponding to the conservation law associated with the "day 3 clean" node (with the above ordering of the variables). We write this row in the following form:
+We want to write rows of $A$ in the form
 
 $$(\heartsuit) \quad \begin{bmatrix}
     \mathbf{\widetilde b} & \mathbf{\widetilde u} & \mathbf{\widetilde c} & \mathbf{\widetilde f} & \mathbf{\widetilde s} \\
@@ -258,10 +258,10 @@ $$\mathbf{\widetilde b} = \begin{bmatrix}
 \end{bmatrix} = -\mathbf{e}_3, \quad \mathbf{\widetilde u} = \mathbf{e}_3,$$
 
 $$\mathbf{\widetilde c} =  \begin{bmatrix}
-0 & -1 & 0 & 0 & 0 & 0 
+0 & -1 & 1 & 0 & 0 & 0 
 \end{bmatrix} = -\mathbf{e}_2, \quad  \mathbf{\widetilde f} = \begin{bmatrix}
-0 & 1 & 0 & 0 & 0 
-\end{bmatrix} = \mathbf{e}_2, \quad\mathbf{\widetilde s} = \mathbf{e}_1$$
+0 & -1 & 0 & 0 & 0 
+\end{bmatrix} = -\mathbf{e}_2, \quad\mathbf{\widetilde s} = -\mathbf{e}_1$$
 
 (here $\mathbf{e}_i$ represents the appropriate standard basis vector in $\mathbb{R}^7$, $\mathbb{R}^6$ or $\mathbb{R}^5$).
 
@@ -279,15 +279,15 @@ def sbv(index,length):
 ##
 row = np.block([(-1)*sbv(3,7), ## bb
                  sbv(3,7),       ## uu
-                 (-1)*sbv(2,7),  ## cc
-                 sbv(2,7),       ## ff
-                 sbv(1,7),       ## ss
-                 np.zeros(7) ## tt
+                 (-1)*sbv(2,6) + sbv(3,6),  ## cc
+                 (-1)*sbv(2,6),       ## ff
+                 (-1)*sbv(1,5)       ## ss
                ])
 
 ## Note that if you had constructed the following rows -- row1, row2, row3, ..., row7 -- you'd produce the matrix A via
 ## A = np.array([row1,row2,row3,...,row7])
 
+print(row.shape)
 print(row)
 ```
 
