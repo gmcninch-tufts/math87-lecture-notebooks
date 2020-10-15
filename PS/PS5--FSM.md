@@ -109,14 +109,5 @@ def A(f,s):
 ```
 
 ```python
-f = [.3,.55,.4,.25,.1]
-s = [.4,.6,.4,.3,0]
-
-AA=A(f,s)
-
-[np.array([0,0,1,0,0])@np.linalg.matrix_power(AA,j)@np.array([100,100,20,20,20]) for j in range(20)]
-```
-
-```python
 
 ```
