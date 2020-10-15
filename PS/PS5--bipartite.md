@@ -19,7 +19,7 @@ Math087 - Mathematical Modeling
 [George McNinch](http://gmcninch.math.tufts.edu) <george.mcninch@tufts.edu>  
 *Fall 2020*
 
-Course material (Week 7): Bi-partite graphs - code and data for problem set
+Course material: Bi-partite graphs - code and data for problem set 5
 ----------------------------------------------------------------------------
 
 ```python
@@ -116,6 +116,29 @@ def display_matching(U,W,edges):
     return "\n".join(l+s)
 
 
+```
+
+```python
+U = ['a','b','c','d','e','f','g','h','i','j','k']
+W = ['A','B','C','D','E','F','G','H','I','J','K']
+
+edges = [('a', 'A'), ('b', 'A'), ('c', 'B'), ('c', 'K'), 
+         ('e', 'F'), ('e', 'G'), ('f', 'C'), ('f', 'G'), 
+         ('f', 'H'), ('f', 'I'), ('f', 'J'), ('f', 'K'), 
+         ('g', 'A'), ('g', 'E'), ('g', 'H'), ('h', 'B'), 
+         ('h', 'D'), ('h', 'E'), ('h', 'F'), ('h', 'J'), 
+         ('k', 'D'), ('k', 'I')]
+
+print(display_matching(U,W,edges))
+
+```
+
+```python
+print(display_matching(U,W,product(U,W)))
+```
+
+```python
+list(product([1,2,3],[4,5]))
 ```
 
 ```python
