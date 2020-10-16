@@ -13494,9 +13494,9 @@ $$M = \{[\text{A1},\text{B1}],[\text{A2},\text{B3}],[\text{A3},\text{B2}]\}$$<p>
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Hall&#8217;s-Marriage-Theorem">Hall&#8217;s Marriage Theorem<a class="anchor-link" href="#Hall&#8217;s-Marriage-Theorem">&#182;</a></h1><p>Let $G$ be a bipartite graph with vertex set $V$ the disjoint union $U \cup W$. Suppose that
 $|U| = |W|$ is finite.</p>
-<p>For any set of nodes $X$, let us write $N(X)$ for the <em>neighborhood</em> of $X$, i.e.</p>
-$$N(X) = \{v \in V \mid v \, \text{is adjacent to a node in $X$}\}
-= \{v \in V \mid \exists e=[u,v] \in E\, \text{for some $u$}\}.$$<p><strong>Theorem:</strong> A perfect matching exists if and only if for every subset $X$ of $U$, $|X| \le |N(X)|$.</p>
+<p>For any set of nodes $X \subset U$, let us write $N(X) \subset W$ for the <em>neighborhood</em> of $X$, i.e.</p>
+$$N(X) = \{w \in W \mid w \, \text{is adjacent to a node in $X$}\}
+= \{w \in W \mid \exists e=[u,w] \in E\, \text{for some $u \in X$}\}.$$<p><strong>Theorem:</strong> A perfect matching exists if and only if for every subset $X$ of $U$, $|X| \le |N(X)|$.</p>
 <p>In other words, if each set of nodes in $U$ has at least as many neighbors as its size, there is guaranteed to be a perfect matching.</p>
 
 </div>
@@ -13506,7 +13506,7 @@ $$N(X) = \{v \in V \mid v \, \text{is adjacent to a node in $X$}\}
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Remark:</strong> Here is a way to visualize the statement of the theorem. Consider a group of $n$ companies who are interested in hiring from a group of $n$ recent college graduates. These $2n$ entities form the vertices of a graph. All graduates will take any job, but certain companies will only hire certain graduates -- the conditions "company x will hire graduate y" determine the edges of the graph, which is bi-partite. In this setting, a perfect matching represents an hiring outcome where each graduate gets a job and each company gets an employee.</p>
-<p>The Theorem says that if each collection of $n$ companies is willing to hire at least $n$ of the graduates, a perfect matching can be achieved.</p>
+<p>The Theorem says that if for each $m \le n$, each collection of $m$ companies is willing to hire at least $m$ of the graduates, a perfect matching can be achieved.</p>
 <p>You can read more about <a href="https://en.wikipedia.org/wiki/Hall%27s_marriage_theorem">the theorem here</a>.</p>
 
 </div>
@@ -13684,66 +13684,28 @@ If the solver gives an optimal flow with values 0 and 1, we can read off a maxim
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Example">Example<a class="anchor-link" href="#Example">&#182;</a></h2>
+<h2 id="Example">Example<a class="anchor-link" href="#Example">&#182;</a></h2><p>In the cell below, there is some code for finding the matching in a bipartite graph.</p>
+<p>The graph should be defined by giving two lists <code>U</code> and <code>W</code> together
+with a list of edges <code>edges</code> whose members should be tuples <code>(u,w)</code> with <code>u</code> in <code>U</code> and <code>w</code> in <code>W</code>.</p>
+<p>The code builds an equality constraint matrix determined by the conservation laws for the directed graph associated as above with the directed graph.</p>
+<p>This code is used on some <em>randomly generated</em> bipartites graphs, which are constructed as follows:</p>
+
+<pre><code>from numpy.random import default_rng
+
+rng = default_rng()
+
+U = ["Alice","Bob","Cathy","Doug","Ellen","Frank"]
+W = ["task 1","task 2","task 3","task 4","task 5","task 6"]
+
+prob = .3
+
+edges=[(x,y) for (x,y) in product(U,W) if rng.random()&lt;prob]</code></pre>
+<p>(There is also some code for producing representations of the graphs).</p>
+
 </div>
 </div>
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered celltag_hide">
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[3]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>{(&#39;Alice&#39;, &#39;task 1&#39;): False,
- (&#39;Alice&#39;, &#39;task 2&#39;): False,
- (&#39;Alice&#39;, &#39;task 3&#39;): False,
- (&#39;Alice&#39;, &#39;task 4&#39;): True,
- (&#39;Alice&#39;, &#39;task 5&#39;): False,
- (&#39;Alice&#39;, &#39;task 6&#39;): False,
- (&#39;Bob&#39;, &#39;task 1&#39;): False,
- (&#39;Bob&#39;, &#39;task 2&#39;): False,
- (&#39;Bob&#39;, &#39;task 3&#39;): False,
- (&#39;Bob&#39;, &#39;task 4&#39;): False,
- (&#39;Bob&#39;, &#39;task 5&#39;): False,
- (&#39;Bob&#39;, &#39;task 6&#39;): False,
- (&#39;Cathy&#39;, &#39;task 1&#39;): False,
- (&#39;Cathy&#39;, &#39;task 2&#39;): True,
- (&#39;Cathy&#39;, &#39;task 3&#39;): True,
- (&#39;Cathy&#39;, &#39;task 4&#39;): False,
- (&#39;Cathy&#39;, &#39;task 5&#39;): True,
- (&#39;Cathy&#39;, &#39;task 6&#39;): True,
- (&#39;Doug&#39;, &#39;task 1&#39;): False,
- (&#39;Doug&#39;, &#39;task 2&#39;): True,
- (&#39;Doug&#39;, &#39;task 3&#39;): True,
- (&#39;Doug&#39;, &#39;task 4&#39;): False,
- (&#39;Doug&#39;, &#39;task 5&#39;): True,
- (&#39;Doug&#39;, &#39;task 6&#39;): True,
- (&#39;Ellen&#39;, &#39;task 1&#39;): False,
- (&#39;Ellen&#39;, &#39;task 2&#39;): False,
- (&#39;Ellen&#39;, &#39;task 3&#39;): False,
- (&#39;Ellen&#39;, &#39;task 4&#39;): False,
- (&#39;Ellen&#39;, &#39;task 5&#39;): False,
- (&#39;Ellen&#39;, &#39;task 6&#39;): False,
- (&#39;Frank&#39;, &#39;task 1&#39;): True,
- (&#39;Frank&#39;, &#39;task 2&#39;): True,
- (&#39;Frank&#39;, &#39;task 3&#39;): True,
- (&#39;Frank&#39;, &#39;task 4&#39;): True,
- (&#39;Frank&#39;, &#39;task 5&#39;): True,
- (&#39;Frank&#39;, &#39;task 6&#39;): False}</pre>
-</div>
-
-</div>
-
-</div>
-</div>
 
 </div></div></section><section>
 <div class="cell border-box-sizing code_cell rendered celltag_hide">
@@ -13754,7 +13716,40 @@ If the solver gives an optimal flow with values 0 and 1, we can read off a maxim
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[4]:</div>
+    <div class="prompt output_prompt">Out[11]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[(&#39;Alice&#39;, &#39;task 1&#39;),
+ (&#39;Alice&#39;, &#39;task 3&#39;),
+ (&#39;Bob&#39;, &#39;task 3&#39;),
+ (&#39;Bob&#39;, &#39;task 5&#39;),
+ (&#39;Cathy&#39;, &#39;task 6&#39;),
+ (&#39;Doug&#39;, &#39;task 2&#39;),
+ (&#39;Doug&#39;, &#39;task 6&#39;),
+ (&#39;Ellen&#39;, &#39;task 3&#39;),
+ (&#39;Ellen&#39;, &#39;task 4&#39;),
+ (&#39;Frank&#39;, &#39;task 3&#39;),
+ (&#39;Frank&#39;, &#39;task 6&#39;)]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div></section><section>
+<div class="cell border-box-sizing code_cell rendered celltag_hide">
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[12]:</div>
 
 
 
@@ -13765,166 +13760,148 @@ If the solver gives an optimal flow with values 0 and 1, we can read off a maxim
 <!-- Generated by graphviz version 2.40.1 (20161225.0304)
  -->
 <!-- Title: %3 Pages: 1 -->
-<svg width="171pt" height="422pt"
- viewBox="0.00 0.00 171.39 422.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 418)">
+<svg width="171pt" height="314pt"
+ viewBox="0.00 0.00 171.39 314.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 310)">
 <title>%3</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-418 167.3887,-418 167.3887,4 -4,4"/>
+<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-310 167.3887,-310 167.3887,4 -4,4"/>
 <!-- Alice -->
 <g id="node1" class="node">
 <title>Alice</title>
 <ellipse fill="none" stroke="#000000" cx="31.8472" cy="-288" rx="29.795" ry="18"/>
 <text text-anchor="middle" x="31.8472" y="-284.3" font-family="Times,serif" font-size="14.00" fill="#000000">Alice</text>
 </g>
-<!-- task 4 -->
-<g id="node10" class="node">
-<title>task 4</title>
+<!-- task 1 -->
+<g id="node7" class="node">
+<title>task 1</title>
 <ellipse fill="none" stroke="#000000" cx="131.5415" cy="-288" rx="31.6951" ry="18"/>
-<text text-anchor="middle" x="131.5415" y="-284.3" font-family="Times,serif" font-size="14.00" fill="#000000">task 4</text>
+<text text-anchor="middle" x="131.5415" y="-284.3" font-family="Times,serif" font-size="14.00" fill="#000000">task 1</text>
 </g>
-<!-- Alice&#45;&gt;task 4 -->
+<!-- Alice&#45;&gt;task 1 -->
 <g id="edge1" class="edge">
-<title>Alice&#45;&gt;task 4</title>
+<title>Alice&#45;&gt;task 1</title>
 <path fill="none" stroke="#000000" d="M61.7588,-288C70.4265,-288 80.0571,-288 89.3269,-288"/>
 <polygon fill="#000000" stroke="#000000" points="89.5691,-291.5001 99.5691,-288 89.569,-284.5001 89.5691,-291.5001"/>
-</g>
-<!-- Bob -->
-<g id="node2" class="node">
-<title>Bob</title>
-<ellipse fill="none" stroke="#000000" cx="31.8472" cy="-342" rx="27" ry="18"/>
-<text text-anchor="middle" x="31.8472" y="-338.3" font-family="Times,serif" font-size="14.00" fill="#000000">Bob</text>
-</g>
-<!-- Cathy -->
-<g id="node3" class="node">
-<title>Cathy</title>
-<ellipse fill="none" stroke="#000000" cx="31.8472" cy="-126" rx="31.6951" ry="18"/>
-<text text-anchor="middle" x="31.8472" y="-122.3" font-family="Times,serif" font-size="14.00" fill="#000000">Cathy</text>
-</g>
-<!-- task 2 -->
-<g id="node8" class="node">
-<title>task 2</title>
-<ellipse fill="none" stroke="#000000" cx="131.5415" cy="-180" rx="31.6951" ry="18"/>
-<text text-anchor="middle" x="131.5415" y="-176.3" font-family="Times,serif" font-size="14.00" fill="#000000">task 2</text>
-</g>
-<!-- Cathy&#45;&gt;task 2 -->
-<g id="edge2" class="edge">
-<title>Cathy&#45;&gt;task 2</title>
-<path fill="none" stroke="#000000" d="M54.9696,-138.5244C68.1815,-145.6807 84.9495,-154.7632 99.4241,-162.6034"/>
-<polygon fill="#000000" stroke="#000000" points="98.0845,-165.8582 108.5444,-167.5435 101.4185,-159.7032 98.0845,-165.8582"/>
 </g>
 <!-- task 3 -->
 <g id="node9" class="node">
 <title>task 3</title>
-<ellipse fill="none" stroke="#000000" cx="131.5415" cy="-126" rx="31.6951" ry="18"/>
-<text text-anchor="middle" x="131.5415" y="-122.3" font-family="Times,serif" font-size="14.00" fill="#000000">task 3</text>
+<ellipse fill="none" stroke="#000000" cx="131.5415" cy="-180" rx="31.6951" ry="18"/>
+<text text-anchor="middle" x="131.5415" y="-176.3" font-family="Times,serif" font-size="14.00" fill="#000000">task 3</text>
 </g>
-<!-- Cathy&#45;&gt;task 3 -->
+<!-- Alice&#45;&gt;task 3 -->
+<g id="edge2" class="edge">
+<title>Alice&#45;&gt;task 3</title>
+<path fill="none" stroke="#000000" d="M50.5051,-273.6866C55.0518,-269.8031 59.7403,-265.438 63.6943,-261 82.8823,-239.4635 80.5064,-228.5365 99.6943,-207 101.382,-205.1057 103.2035,-203.2248 105.0907,-201.3888"/>
+<polygon fill="#000000" stroke="#000000" points="107.5115,-203.9181 112.5507,-194.5984 102.7995,-198.7415 107.5115,-203.9181"/>
+</g>
+<!-- Bob -->
+<g id="node2" class="node">
+<title>Bob</title>
+<ellipse fill="none" stroke="#000000" cx="31.8472" cy="-234" rx="27" ry="18"/>
+<text text-anchor="middle" x="31.8472" y="-230.3" font-family="Times,serif" font-size="14.00" fill="#000000">Bob</text>
+</g>
+<!-- Bob&#45;&gt;task 3 -->
 <g id="edge3" class="edge">
-<title>Cathy&#45;&gt;task 3</title>
-<path fill="none" stroke="#000000" d="M63.9399,-126C72.0334,-126 80.8452,-126 89.3523,-126"/>
-<polygon fill="#000000" stroke="#000000" points="89.509,-129.5001 99.509,-126 89.5089,-122.5001 89.509,-129.5001"/>
+<title>Bob&#45;&gt;task 3</title>
+<path fill="none" stroke="#000000" d="M52.9898,-222.548C66.4324,-215.2667 84.0999,-205.697 99.2745,-197.4776"/>
+<polygon fill="#000000" stroke="#000000" points="101.2146,-200.4073 108.3406,-192.5669 97.8806,-194.2522 101.2146,-200.4073"/>
 </g>
 <!-- task 5 -->
 <g id="node11" class="node">
 <title>task 5</title>
-<ellipse fill="none" stroke="#000000" cx="131.5415" cy="-72" rx="31.6951" ry="18"/>
-<text text-anchor="middle" x="131.5415" y="-68.3" font-family="Times,serif" font-size="14.00" fill="#000000">task 5</text>
+<ellipse fill="none" stroke="#000000" cx="131.5415" cy="-234" rx="31.6951" ry="18"/>
+<text text-anchor="middle" x="131.5415" y="-230.3" font-family="Times,serif" font-size="14.00" fill="#000000">task 5</text>
 </g>
-<!-- Cathy&#45;&gt;task 5 -->
+<!-- Bob&#45;&gt;task 5 -->
 <g id="edge4" class="edge">
-<title>Cathy&#45;&gt;task 5</title>
-<path fill="none" stroke="#000000" d="M54.9696,-113.4756C68.1815,-106.3193 84.9495,-97.2368 99.4241,-89.3966"/>
-<polygon fill="#000000" stroke="#000000" points="101.4185,-92.2968 108.5444,-84.4565 98.0845,-86.1418 101.4185,-92.2968"/>
+<title>Bob&#45;&gt;task 5</title>
+<path fill="none" stroke="#000000" d="M59.0891,-234C68.4287,-234 79.1115,-234 89.3525,-234"/>
+<polygon fill="#000000" stroke="#000000" points="89.3801,-237.5001 99.3801,-234 89.3801,-230.5001 89.3801,-237.5001"/>
+</g>
+<!-- Cathy -->
+<g id="node3" class="node">
+<title>Cathy</title>
+<ellipse fill="none" stroke="#000000" cx="31.8472" cy="-72" rx="31.6951" ry="18"/>
+<text text-anchor="middle" x="31.8472" y="-68.3" font-family="Times,serif" font-size="14.00" fill="#000000">Cathy</text>
 </g>
 <!-- task 6 -->
 <g id="node12" class="node">
 <title>task 6</title>
-<ellipse fill="none" stroke="#000000" cx="131.5415" cy="-18" rx="31.6951" ry="18"/>
-<text text-anchor="middle" x="131.5415" y="-14.3" font-family="Times,serif" font-size="14.00" fill="#000000">task 6</text>
+<ellipse fill="none" stroke="#000000" cx="131.5415" cy="-72" rx="31.6951" ry="18"/>
+<text text-anchor="middle" x="131.5415" y="-68.3" font-family="Times,serif" font-size="14.00" fill="#000000">task 6</text>
 </g>
 <!-- Cathy&#45;&gt;task 6 -->
 <g id="edge5" class="edge">
 <title>Cathy&#45;&gt;task 6</title>
-<path fill="none" stroke="#000000" d="M50.838,-111.4016C55.2801,-107.5901 59.8368,-103.3297 63.6943,-99 82.8823,-77.4635 80.5064,-66.5365 99.6943,-45 101.382,-43.1057 103.2035,-41.2248 105.0907,-39.3888"/>
-<polygon fill="#000000" stroke="#000000" points="107.5115,-41.9181 112.5507,-32.5984 102.7995,-36.7415 107.5115,-41.9181"/>
+<path fill="none" stroke="#000000" d="M63.9399,-72C72.0334,-72 80.8452,-72 89.3523,-72"/>
+<polygon fill="#000000" stroke="#000000" points="89.509,-75.5001 99.509,-72 89.5089,-68.5001 89.509,-75.5001"/>
 </g>
 <!-- Doug -->
 <g id="node4" class="node">
 <title>Doug</title>
-<ellipse fill="none" stroke="#000000" cx="31.8472" cy="-72" rx="30.5947" ry="18"/>
-<text text-anchor="middle" x="31.8472" y="-68.3" font-family="Times,serif" font-size="14.00" fill="#000000">Doug</text>
+<ellipse fill="none" stroke="#000000" cx="31.8472" cy="-18" rx="30.5947" ry="18"/>
+<text text-anchor="middle" x="31.8472" y="-14.3" font-family="Times,serif" font-size="14.00" fill="#000000">Doug</text>
+</g>
+<!-- task 2 -->
+<g id="node8" class="node">
+<title>task 2</title>
+<ellipse fill="none" stroke="#000000" cx="131.5415" cy="-18" rx="31.6951" ry="18"/>
+<text text-anchor="middle" x="131.5415" y="-14.3" font-family="Times,serif" font-size="14.00" fill="#000000">task 2</text>
 </g>
 <!-- Doug&#45;&gt;task 2 -->
 <g id="edge6" class="edge">
 <title>Doug&#45;&gt;task 2</title>
-<path fill="none" stroke="#000000" d="M50.5051,-86.3134C55.0518,-90.1969 59.7403,-94.562 63.6943,-99 82.8823,-120.5365 80.5064,-131.4635 99.6943,-153 101.382,-154.8943 103.2035,-156.7752 105.0907,-158.6112"/>
-<polygon fill="#000000" stroke="#000000" points="102.7995,-161.2585 112.5507,-165.4016 107.5115,-156.0819 102.7995,-161.2585"/>
-</g>
-<!-- Doug&#45;&gt;task 3 -->
-<g id="edge7" class="edge">
-<title>Doug&#45;&gt;task 3</title>
-<path fill="none" stroke="#000000" d="M54.4694,-84.2534C67.6647,-91.4008 84.5317,-100.5369 99.1205,-108.439"/>
-<polygon fill="#000000" stroke="#000000" points="97.8571,-111.735 108.317,-113.4203 101.191,-105.58 97.8571,-111.735"/>
-</g>
-<!-- Doug&#45;&gt;task 5 -->
-<g id="edge8" class="edge">
-<title>Doug&#45;&gt;task 5</title>
-<path fill="none" stroke="#000000" d="M62.5722,-72C70.961,-72 80.2013,-72 89.1175,-72"/>
-<polygon fill="#000000" stroke="#000000" points="89.3651,-75.5001 99.365,-72 89.365,-68.5001 89.3651,-75.5001"/>
+<path fill="none" stroke="#000000" d="M62.5722,-18C70.961,-18 80.2013,-18 89.1175,-18"/>
+<polygon fill="#000000" stroke="#000000" points="89.3651,-21.5001 99.365,-18 89.365,-14.5001 89.3651,-21.5001"/>
 </g>
 <!-- Doug&#45;&gt;task 6 -->
-<g id="edge9" class="edge">
+<g id="edge7" class="edge">
 <title>Doug&#45;&gt;task 6</title>
-<path fill="none" stroke="#000000" d="M54.4694,-59.7466C67.6647,-52.5992 84.5317,-43.4631 99.1205,-35.561"/>
-<polygon fill="#000000" stroke="#000000" points="101.191,-38.42 108.317,-30.5797 97.8571,-32.265 101.191,-38.42"/>
+<path fill="none" stroke="#000000" d="M54.4694,-30.2534C67.6647,-37.4008 84.5317,-46.5369 99.1205,-54.439"/>
+<polygon fill="#000000" stroke="#000000" points="97.8571,-57.735 108.317,-59.4203 101.191,-51.58 97.8571,-57.735"/>
 </g>
 <!-- Ellen -->
 <g id="node5" class="node">
 <title>Ellen</title>
-<ellipse fill="none" stroke="#000000" cx="31.8472" cy="-396" rx="29.4969" ry="18"/>
-<text text-anchor="middle" x="31.8472" y="-392.3" font-family="Times,serif" font-size="14.00" fill="#000000">Ellen</text>
+<ellipse fill="none" stroke="#000000" cx="31.8472" cy="-180" rx="29.4969" ry="18"/>
+<text text-anchor="middle" x="31.8472" y="-176.3" font-family="Times,serif" font-size="14.00" fill="#000000">Ellen</text>
+</g>
+<!-- Ellen&#45;&gt;task 3 -->
+<g id="edge8" class="edge">
+<title>Ellen&#45;&gt;task 3</title>
+<path fill="none" stroke="#000000" d="M61.2196,-180C70.0773,-180 79.9791,-180 89.4923,-180"/>
+<polygon fill="#000000" stroke="#000000" points="89.5949,-183.5001 99.5948,-180 89.5948,-176.5001 89.5949,-183.5001"/>
+</g>
+<!-- task 4 -->
+<g id="node10" class="node">
+<title>task 4</title>
+<ellipse fill="none" stroke="#000000" cx="131.5415" cy="-126" rx="31.6951" ry="18"/>
+<text text-anchor="middle" x="131.5415" y="-122.3" font-family="Times,serif" font-size="14.00" fill="#000000">task 4</text>
+</g>
+<!-- Ellen&#45;&gt;task 4 -->
+<g id="edge9" class="edge">
+<title>Ellen&#45;&gt;task 4</title>
+<path fill="none" stroke="#000000" d="M53.9726,-168.0156C67.369,-160.7594 84.6824,-151.3815 99.5525,-143.327"/>
+<polygon fill="#000000" stroke="#000000" points="101.3127,-146.3541 108.4387,-138.5138 97.9787,-140.1991 101.3127,-146.3541"/>
 </g>
 <!-- Frank -->
 <g id="node6" class="node">
 <title>Frank</title>
-<ellipse fill="none" stroke="#000000" cx="31.8472" cy="-180" rx="31.3957" ry="18"/>
-<text text-anchor="middle" x="31.8472" y="-176.3" font-family="Times,serif" font-size="14.00" fill="#000000">Frank</text>
-</g>
-<!-- task 1 -->
-<g id="node7" class="node">
-<title>task 1</title>
-<ellipse fill="none" stroke="#000000" cx="131.5415" cy="-234" rx="31.6951" ry="18"/>
-<text text-anchor="middle" x="131.5415" y="-230.3" font-family="Times,serif" font-size="14.00" fill="#000000">task 1</text>
-</g>
-<!-- Frank&#45;&gt;task 1 -->
-<g id="edge10" class="edge">
-<title>Frank&#45;&gt;task 1</title>
-<path fill="none" stroke="#000000" d="M54.9696,-192.5244C68.1815,-199.6807 84.9495,-208.7632 99.4241,-216.6034"/>
-<polygon fill="#000000" stroke="#000000" points="98.0845,-219.8582 108.5444,-221.5435 101.4185,-213.7032 98.0845,-219.8582"/>
-</g>
-<!-- Frank&#45;&gt;task 2 -->
-<g id="edge11" class="edge">
-<title>Frank&#45;&gt;task 2</title>
-<path fill="none" stroke="#000000" d="M63.1176,-180C71.4083,-180 80.4991,-180 89.2696,-180"/>
-<polygon fill="#000000" stroke="#000000" points="89.3511,-183.5001 99.3511,-180 89.351,-176.5001 89.3511,-183.5001"/>
+<ellipse fill="none" stroke="#000000" cx="31.8472" cy="-126" rx="31.3957" ry="18"/>
+<text text-anchor="middle" x="31.8472" y="-122.3" font-family="Times,serif" font-size="14.00" fill="#000000">Frank</text>
 </g>
 <!-- Frank&#45;&gt;task 3 -->
-<g id="edge12" class="edge">
+<g id="edge10" class="edge">
 <title>Frank&#45;&gt;task 3</title>
-<path fill="none" stroke="#000000" d="M54.9696,-167.4756C68.1815,-160.3193 84.9495,-151.2368 99.4241,-143.3966"/>
-<polygon fill="#000000" stroke="#000000" points="101.4185,-146.2968 108.5444,-138.4565 98.0845,-140.1418 101.4185,-146.2968"/>
+<path fill="none" stroke="#000000" d="M54.9696,-138.5244C68.1815,-145.6807 84.9495,-154.7632 99.4241,-162.6034"/>
+<polygon fill="#000000" stroke="#000000" points="98.0845,-165.8582 108.5444,-167.5435 101.4185,-159.7032 98.0845,-165.8582"/>
 </g>
-<!-- Frank&#45;&gt;task 4 -->
-<g id="edge13" class="edge">
-<title>Frank&#45;&gt;task 4</title>
-<path fill="none" stroke="#000000" d="M44.3406,-196.5316C57.406,-213.4171 78.8731,-240.0545 99.6943,-261 101.4829,-262.7993 103.3778,-264.6112 105.3163,-266.3988"/>
-<polygon fill="#000000" stroke="#000000" points="103.0705,-269.0851 112.8778,-273.0938 107.7109,-263.8442 103.0705,-269.0851"/>
-</g>
-<!-- Frank&#45;&gt;task 5 -->
-<g id="edge14" class="edge">
-<title>Frank&#45;&gt;task 5</title>
-<path fill="none" stroke="#000000" d="M50.838,-165.4016C55.2801,-161.5901 59.8368,-157.3297 63.6943,-153 82.8823,-131.4635 80.5064,-120.5365 99.6943,-99 101.382,-97.1057 103.2035,-95.2248 105.0907,-93.3888"/>
-<polygon fill="#000000" stroke="#000000" points="107.5115,-95.9181 112.5507,-86.5984 102.7995,-90.7415 107.5115,-95.9181"/>
+<!-- Frank&#45;&gt;task 6 -->
+<g id="edge11" class="edge">
+<title>Frank&#45;&gt;task 6</title>
+<path fill="none" stroke="#000000" d="M54.9696,-113.4756C68.1815,-106.3193 84.9495,-97.2368 99.4241,-89.3966"/>
+<polygon fill="#000000" stroke="#000000" points="101.4185,-92.2968 108.5444,-84.4565 98.0845,-86.1418 101.4185,-92.2968"/>
 </g>
 </g>
 </svg>
@@ -13945,18 +13922,7 @@ If the solver gives an optimal flow with values 0 and 1, we can read off a maxim
 
 <div class="output_area">
 
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>-4.0
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[5]:</div>
+    <div class="prompt output_prompt">Out[20]:</div>
 
 
 
@@ -13967,26 +13933,26 @@ If the solver gives an optimal flow with values 0 and 1, we can read off a maxim
 <!-- Generated by graphviz version 2.40.1 (20161225.0304)
  -->
 <!-- Title: %3 Pages: 1 -->
-<svg width="171pt" height="422pt"
- viewBox="0.00 0.00 171.39 422.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 418)">
+<svg width="171pt" height="314pt"
+ viewBox="0.00 0.00 171.39 314.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 310)">
 <title>%3</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-418 167.3887,-418 167.3887,4 -4,4"/>
+<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-310 167.3887,-310 167.3887,4 -4,4"/>
 <!-- Alice -->
 <g id="node1" class="node">
 <title>Alice</title>
 <ellipse fill="none" stroke="#000000" cx="31.8472" cy="-18" rx="29.795" ry="18"/>
 <text text-anchor="middle" x="31.8472" y="-14.3" font-family="Times,serif" font-size="14.00" fill="#000000">Alice</text>
 </g>
-<!-- task 4 -->
-<g id="node10" class="node">
-<title>task 4</title>
+<!-- task 1 -->
+<g id="node7" class="node">
+<title>task 1</title>
 <ellipse fill="none" stroke="#000000" cx="131.5415" cy="-18" rx="31.6951" ry="18"/>
-<text text-anchor="middle" x="131.5415" y="-14.3" font-family="Times,serif" font-size="14.00" fill="#000000">task 4</text>
+<text text-anchor="middle" x="131.5415" y="-14.3" font-family="Times,serif" font-size="14.00" fill="#000000">task 1</text>
 </g>
-<!-- Alice&#45;&gt;task 4 -->
+<!-- Alice&#45;&gt;task 1 -->
 <g id="edge1" class="edge">
-<title>Alice&#45;&gt;task 4</title>
+<title>Alice&#45;&gt;task 1</title>
 <path fill="none" stroke="#000000" d="M61.7588,-18C70.4265,-18 80.0571,-18 89.3269,-18"/>
 <polygon fill="#000000" stroke="#000000" points="89.5691,-21.5001 99.5691,-18 89.569,-14.5001 89.5691,-21.5001"/>
 </g>
@@ -13996,21 +13962,33 @@ If the solver gives an optimal flow with values 0 and 1, we can read off a maxim
 <ellipse fill="none" stroke="#000000" cx="31.8472" cy="-72" rx="27" ry="18"/>
 <text text-anchor="middle" x="31.8472" y="-68.3" font-family="Times,serif" font-size="14.00" fill="#000000">Bob</text>
 </g>
+<!-- task 5 -->
+<g id="node11" class="node">
+<title>task 5</title>
+<ellipse fill="none" stroke="#000000" cx="131.5415" cy="-72" rx="31.6951" ry="18"/>
+<text text-anchor="middle" x="131.5415" y="-68.3" font-family="Times,serif" font-size="14.00" fill="#000000">task 5</text>
+</g>
+<!-- Bob&#45;&gt;task 5 -->
+<g id="edge2" class="edge">
+<title>Bob&#45;&gt;task 5</title>
+<path fill="none" stroke="#000000" d="M59.0891,-72C68.4287,-72 79.1115,-72 89.3525,-72"/>
+<polygon fill="#000000" stroke="#000000" points="89.3801,-75.5001 99.3801,-72 89.3801,-68.5001 89.3801,-75.5001"/>
+</g>
 <!-- Cathy -->
 <g id="node3" class="node">
 <title>Cathy</title>
 <ellipse fill="none" stroke="#000000" cx="31.8472" cy="-126" rx="31.6951" ry="18"/>
 <text text-anchor="middle" x="31.8472" y="-122.3" font-family="Times,serif" font-size="14.00" fill="#000000">Cathy</text>
 </g>
-<!-- task 3 -->
-<g id="node9" class="node">
-<title>task 3</title>
+<!-- task 6 -->
+<g id="node12" class="node">
+<title>task 6</title>
 <ellipse fill="none" stroke="#000000" cx="131.5415" cy="-126" rx="31.6951" ry="18"/>
-<text text-anchor="middle" x="131.5415" y="-122.3" font-family="Times,serif" font-size="14.00" fill="#000000">task 3</text>
+<text text-anchor="middle" x="131.5415" y="-122.3" font-family="Times,serif" font-size="14.00" fill="#000000">task 6</text>
 </g>
-<!-- Cathy&#45;&gt;task 3 -->
-<g id="edge2" class="edge">
-<title>Cathy&#45;&gt;task 3</title>
+<!-- Cathy&#45;&gt;task 6 -->
+<g id="edge3" class="edge">
+<title>Cathy&#45;&gt;task 6</title>
 <path fill="none" stroke="#000000" d="M63.9399,-126C72.0334,-126 80.8452,-126 89.3523,-126"/>
 <polygon fill="#000000" stroke="#000000" points="89.509,-129.5001 99.509,-126 89.5089,-122.5001 89.509,-129.5001"/>
 </g>
@@ -14027,7 +14005,7 @@ If the solver gives an optimal flow with values 0 and 1, we can read off a maxim
 <text text-anchor="middle" x="131.5415" y="-176.3" font-family="Times,serif" font-size="14.00" fill="#000000">task 2</text>
 </g>
 <!-- Doug&#45;&gt;task 2 -->
-<g id="edge3" class="edge">
+<g id="edge4" class="edge">
 <title>Doug&#45;&gt;task 2</title>
 <path fill="none" stroke="#000000" d="M62.5722,-180C70.961,-180 80.2013,-180 89.1175,-180"/>
 <polygon fill="#000000" stroke="#000000" points="89.3651,-183.5001 99.365,-180 89.365,-176.5001 89.3651,-183.5001"/>
@@ -14038,35 +14016,35 @@ If the solver gives an optimal flow with values 0 and 1, we can read off a maxim
 <ellipse fill="none" stroke="#000000" cx="31.8472" cy="-234" rx="29.4969" ry="18"/>
 <text text-anchor="middle" x="31.8472" y="-230.3" font-family="Times,serif" font-size="14.00" fill="#000000">Ellen</text>
 </g>
+<!-- task 4 -->
+<g id="node10" class="node">
+<title>task 4</title>
+<ellipse fill="none" stroke="#000000" cx="131.5415" cy="-234" rx="31.6951" ry="18"/>
+<text text-anchor="middle" x="131.5415" y="-230.3" font-family="Times,serif" font-size="14.00" fill="#000000">task 4</text>
+</g>
+<!-- Ellen&#45;&gt;task 4 -->
+<g id="edge5" class="edge">
+<title>Ellen&#45;&gt;task 4</title>
+<path fill="none" stroke="#000000" d="M61.2196,-234C70.0773,-234 79.9791,-234 89.4923,-234"/>
+<polygon fill="#000000" stroke="#000000" points="89.5949,-237.5001 99.5948,-234 89.5948,-230.5001 89.5949,-237.5001"/>
+</g>
 <!-- Frank -->
 <g id="node6" class="node">
 <title>Frank</title>
 <ellipse fill="none" stroke="#000000" cx="31.8472" cy="-288" rx="31.3957" ry="18"/>
 <text text-anchor="middle" x="31.8472" y="-284.3" font-family="Times,serif" font-size="14.00" fill="#000000">Frank</text>
 </g>
-<!-- task 1 -->
-<g id="node7" class="node">
-<title>task 1</title>
+<!-- task 3 -->
+<g id="node9" class="node">
+<title>task 3</title>
 <ellipse fill="none" stroke="#000000" cx="131.5415" cy="-288" rx="31.6951" ry="18"/>
-<text text-anchor="middle" x="131.5415" y="-284.3" font-family="Times,serif" font-size="14.00" fill="#000000">task 1</text>
+<text text-anchor="middle" x="131.5415" y="-284.3" font-family="Times,serif" font-size="14.00" fill="#000000">task 3</text>
 </g>
-<!-- Frank&#45;&gt;task 1 -->
-<g id="edge4" class="edge">
-<title>Frank&#45;&gt;task 1</title>
+<!-- Frank&#45;&gt;task 3 -->
+<g id="edge6" class="edge">
+<title>Frank&#45;&gt;task 3</title>
 <path fill="none" stroke="#000000" d="M63.1176,-288C71.4083,-288 80.4991,-288 89.2696,-288"/>
 <polygon fill="#000000" stroke="#000000" points="89.3511,-291.5001 99.3511,-288 89.351,-284.5001 89.3511,-291.5001"/>
-</g>
-<!-- task 5 -->
-<g id="node11" class="node">
-<title>task 5</title>
-<ellipse fill="none" stroke="#000000" cx="131.5415" cy="-342" rx="31.6951" ry="18"/>
-<text text-anchor="middle" x="131.5415" y="-338.3" font-family="Times,serif" font-size="14.00" fill="#000000">task 5</text>
-</g>
-<!-- task 6 -->
-<g id="node12" class="node">
-<title>task 6</title>
-<ellipse fill="none" stroke="#000000" cx="131.5415" cy="-396" rx="31.6951" ry="18"/>
-<text text-anchor="middle" x="131.5415" y="-392.3" font-family="Times,serif" font-size="14.00" fill="#000000">task 6</text>
 </g>
 </g>
 </svg>
@@ -14078,6 +14056,41 @@ If the solver gives an optimal flow with values 0 and 1, we can read off a maxim
 </div>
 </div>
 
+</div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>print(display_matching(U,W,edges))</p>
+
+</div>
+</div>
+</div><div class="fragment">
+<div class="cell border-box-sizing code_cell rendered celltag_hide">
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>length of matching: 6
+Alice  ---&gt; task 1
+Bob  ---&gt; task 5
+Cathy  ---&gt; task 6
+Doug  ---&gt; task 2
+Ellen  ---&gt; task 4
+Frank  ---&gt; task 3
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -14091,33 +14104,7 @@ If the solver gives an optimal flow with values 0 and 1, we can read off a maxim
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div></section></section>
+</div></div></section></section>
 </div>
 </div>
 

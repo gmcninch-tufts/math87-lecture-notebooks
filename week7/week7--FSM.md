@@ -242,7 +242,7 @@ For the (1 dimensional) drunkard's walk, consider the following description:
 - at time 0, we begin at state 0.
 - at time 1, we are at state 1 with .50 probabilty, and we are at state -1 with .50 probability
 - at time 2, we are at state 2 with .25 probability, at state 0 with .50 probability, and state -2 with .25 probability
-- at time 3, we are at state 3 with probability .125, at state 1 with probability .375, at state -1 with probability .375, and state   -2 with probability .125
+- at time 3, we are at state 3 with probability .125, at state 1 with probability .375, at state -1 with probability .375, and state   -3 with probability .125
 
 etc...
 
@@ -325,11 +325,11 @@ Interpreting this model
   The size of the population of age 1 is given by $s_0 \cdot p_0$, and more generally
   for $i \ge 1$ the size of the population of age $i$ is given by $s_{i-1}p_{i-1}$.
   
-  Thus the population at time 1 is given by the sequence
+  Thus the population at time 1 is described by the sequence
   
-  $\displaystyle (\sum_{i=1}^\infty f_i p_i,\, s_0p_1,\, s_1p_2,\, \dots)$
+  $\displaystyle (\sum_{i=1}^\infty f_i p_i,\, s_0p_0,\, s_1p_1,\, \dots)$
   
-  And the total population at time 1 is given by
+  And in particular the total population at time 1 is given by
   
   $\displaystyle \sum_{i=1}^\infty f_i p_i + \sum_{j=0}^\infty s_jp_j.$
 <!-- #endregion -->
@@ -444,6 +444,9 @@ $$\begin{bmatrix} 1 & 1 & \cdots & 1 \end{bmatrix} \cdot A^j = \mathbf{0} \quad 
 Thus with the given matrix $A$, the total population will always decay to 0 after 20 time units!
 
 --------
+<!-- #endregion -->
+
+<!-- #region slideshow={"slide_type": "subslide"} -->
 
 Now let's consider different probabilities, as follows:
 
@@ -460,6 +463,7 @@ sB = [.40,.70,.55,.50,.35,.15,.05,0]
 print(powers(f=fB,s=sB,iter=20,skip=20))
 ```
 
+<!-- #region slideshow={"slide_type": "subslide"} -->
 Case ``fB,sB``
 ----------
 
@@ -467,6 +471,7 @@ In this case, note that the first entry of the vector $$\begin{bmatrix} 1 & 1 & 
 appears to be an increasing function of $j$.
 
 Thus, for example we expect that given an initial population $\mathbf{p}^{(0)}$ with $p_0 >0$, the total population is increasing as a funcion of $j$, rather than decaying.
+<!-- #endregion -->
 
 ```python
 

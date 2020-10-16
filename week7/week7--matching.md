@@ -133,10 +133,10 @@ Hall’s Marriage Theorem
 Let $G$ be a bipartite graph with vertex set $V$ the disjoint union $U \cup W$. Suppose that
 $|U| = |W|$ is finite.
 
-For any set of nodes $X$, let us write $N(X)$ for the *neighborhood* of $X$, i.e.
+For any set of nodes $X \subset U$, let us write $N(X) \subset W$ for the *neighborhood* of $X$, i.e.
 
-$$N(X) = \{v \in V \mid v \, \text{is adjacent to a node in $X$}\}
-= \{v \in V \mid \exists e=[u,v] \in E\, \text{for some $u$}\}.$$
+$$N(X) = \{w \in W \mid w \, \text{is adjacent to a node in $X$}\}
+= \{w \in W \mid \exists e=[u,w] \in E\, \text{for some $u \in X$}\}.$$
 
 **Theorem:** A perfect matching exists if and only if for every subset $X$ of $U$, $|X| \le |N(X)|$.
 
@@ -148,7 +148,7 @@ In other words, if each set of nodes in $U$ has at least as many neighbors as it
 <!-- #region slideshow={"slide_type": "subslide"} -->
 **Remark:** Here is a way to visualize the statement of the theorem. Consider a group of $n$ companies who are interested in hiring from a group of $n$ recent college graduates. These $2n$ entities form the vertices of a graph. All graduates will take any job, but certain companies will only hire certain graduates -- the conditions "company x will hire graduate y" determine the edges of the graph, which is bi-partite. In this setting, a perfect matching represents an hiring outcome where each graduate gets a job and each company gets an employee. 
 
-The Theorem says that if each collection of $n$ companies is willing to hire at least $n$ of the graduates, a perfect matching can be achieved.
+The Theorem says that if for each $m \le n$, each collection of $m$ companies is willing to hire at least $m$ of the graduates, a perfect matching can be achieved.
 
 You can read more about [the theorem here](https://en.wikipedia.org/wiki/Hall%27s_marriage_theorem).
 <!-- #endregion -->
@@ -338,9 +338,35 @@ If the solver gives an optimal flow with values 0 and 1, we can read off a maxim
 <!-- #region slideshow={"slide_type": "slide"} -->
 Example
 --------
+
+In the cell below, there is some code for finding the matching in a bipartite graph.
+
+The graph should be defined by giving two lists ``U`` and ``W`` together
+with a list of edges ``edges`` whose members should be tuples ``(u,w)`` with ``u`` in ``U`` and ``w`` in ``W``.
+
+The code builds an equality constraint matrix determined by the conservation laws for the directed graph associated as above with the directed graph.
+
+This code is used on some *randomly generated* bipartites graphs, which are constructed as follows:
+
+```
+from numpy.random import default_rng
+
+rng = default_rng()
+
+U = ["Alice","Bob","Cathy","Doug","Ellen","Frank"]
+W = ["task 1","task 2","task 3","task 4","task 5","task 6"]
+
+prob = .3
+
+edges=[(x,y) for (x,y) in product(U,W) if rng.random()<prob]
+```
+
+(There is also some code for producing representations of the graphs).
+
+
 <!-- #endregion -->
 
-```python tags=["hide"]
+```python tags=["hide"] slideshow={"slide_type": "fragment"}
 import numpy as np
 from scipy.optimize import linprog
 from itertools import product
@@ -434,7 +460,7 @@ def display_matching(U,W,edges):
 
 ```
 
-```python slideshow={"slide_type": "fragment"} tags=["hide"]
+```python slideshow={"slide_type": "subslide"} tags=["hide"]
 from numpy.random import default_rng
 
 rng = default_rng()
@@ -479,7 +505,11 @@ matches = find_matching(U,W,edges)
 graph(U,W,matches)
 ```
 
-```python
+<!-- #region slideshow={"slide_type": "subslide"} -->
+print(display_matching(U,W,edges))
+<!-- #endregion -->
+
+```python slideshow={"slide_type": "fragment"} tags=["hide"]
 print(display_matching(U,W,edges))
 ```
 
