@@ -767,9 +767,11 @@ Well, by duality it is the same to solve the ``min cut`` problem. Thus, we need 
 
 <!-- #endregion -->
 
-<!-- #region slideshow={"slide_type": "subslide"} -->
-<img src="MBTA-stops.gv.png" width="650" height="650" />
-<!-- #endregion -->
+```python slideshow={"slide_type": "subslide"}
+#<img src="MBTA-stops.gv.png" width="650" height="650" />
+
+mbta()
+```
 
 <!-- #region slideshow={"slide_type": "subslide"} -->
 Remark: we must interpret this *undirected* graph as a directed graph with source "Park St" and terminus "Downtown Crossing", as discussed before.
