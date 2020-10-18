@@ -151,17 +151,18 @@ Example: MBTA!
 The weights on the edges give the capacities of the individual lines:
 <!-- #endregion -->
 
-```python slideshow={"slide_type": "fragment"} tags=["hide"]
+```python slideshow={"slide_type": "subslide"} tags=["hide"]
+import itertools as it
 
 def mbta():
-    mbta = Graph('weighted graph for some MBTA stops')
+    mbta = Graph('MBTA-stops',engine='circo')
     I = {1:"Central Sq",
          2:"Hynes",
          3:"Mass Ave",
          4:"Park St",
          5:"Govt Ctr",
          6:"D'town Xing",
-         7:"South Station",
+         7:"South Stn",
          8:"State St.",
          9:"HayMkt"}
     
@@ -177,16 +178,22 @@ def mbta():
          (6,8):100,
          (6,7):200,
          (8,9):100}
-    
+        
+        
     for i in I.keys():
         mbta.node(f"{I[i]}")
+
     for (i,j) in J.keys():
         mbta.edge(f"{I[i]}",f"{I[j]}",f"{J[(i,j)]}")
 
     return mbta
 
-mbta()
+m = mbta()
+m.format='png'
+m.render()
 ```
+
+<img src="MBTA-stops.gv.png" width="650" height="650" />
 
 <!-- #region slideshow={"slide_type": "slide"} -->
 Maximum Flow
@@ -359,8 +366,8 @@ subject to $0 \le f(u \to v) \le c(u \to v)$ for each edge $u \to v \in E$
 
 and subject to the **conservation laws**:
 
-$\displaystyle 0 = \sum_{u\, \text{such that}\, (u \to v) \in E} f(u \to v) 
-- \sum_{u\, \text{such that}\, (v \to u) \in E} f(v \to u)$ for each node $v \neq s,t$.
+$\displaystyle 0 = \sum_{u\, \text{such that}\, (u \to v) \in E} f(u \to v) - 
+\sum_{u\, \text{such that}\, (v \to u) \in E} f(v \to u)$ for each node $v \neq s,t$.
 
 We have just described a linear program; an optimal solution to this linear program is known as ``max flow``.
 
@@ -579,7 +586,7 @@ where
 $$A_1 = \begin{bmatrix}
 I_5 \\
 \begin{matrix}
-0 & 0 & -1 & -1 & 0 \\
+1 & 0 & -1 & -1 & 0 \\
 0 & 1 & 1 & 0 & -1
 \end{matrix}
 \end{bmatrix}$$
@@ -590,15 +597,15 @@ and where $I_5$ is the $5 \times 5$ identity matrix.
 <!-- #region slideshow={"slide_type": "subslide"} -->
 Thus, we maximize $\sum_{i=1}^5 d_i e_i$ subject to
 
-$d_1 + p_1 - p_1' \ge 1$
+$d_1 + p_1  \ge 1$
 
-$d_2 + p_2 - p_2' \ge 1$
+$d_2 + p_2 \ge 1$
 
-$d_3 - p_1 + p_2 + (p_1' - p_2') \ge 0$
+$d_3 - p_1 + p_2 \ge 0$
 
-$d_4 - p_1 + p_1' \ge 0$
+$d_4 - p_1 \ge 0$
 
-$d_5 - p_2 + p_2' \ge 0$
+$d_5 - p_2 \ge 0$
 
 $d_i,p_j \ge 0$ all $i,j$.
 <!-- #endregion -->
@@ -623,11 +630,21 @@ np.set_printoptions(formatter={'float_kind':float_formatter})
 def sbv(index,size):
     return np.array([1.0 if i == index-1 else 0.0 for i in range(size)])
 
+# Whoops -- my original version had a typo in the 4th row here!
+# 
+#B=np.block([[ sbv(1,5) , np.array([ 1, 0]) ],
+#            [ sbv(2,5) , np.array([ 0, 1]) ],
+#            [ sbv(3,5) , np.array([-1, 1]) ],
+#            [ sbv(4,5) , np.array([ 1, 0]) ],
+#            [ sbv(5,5) , np.array([ 0,-1]) ]])
+
+
 B=np.block([[ sbv(1,5) , np.array([ 1, 0]) ],
             [ sbv(2,5) , np.array([ 0, 1]) ],
             [ sbv(3,5) , np.array([-1, 1]) ],
-            [ sbv(4,5) , np.array([ 1, 0]) ],
+            [ sbv(4,5) , np.array([ -1, 0]) ],
             [ sbv(5,5) , np.array([ 0,-1]) ]])
+
 
 b=np.array([1,1,0,0,0])
 
@@ -750,9 +767,9 @@ Well, by duality it is the same to solve the ``min cut`` problem. Thus, we need 
 
 <!-- #endregion -->
 
-```python slideshow={"slide_type": "subslide"} tags=["hide"]
-mbta()
-```
+<!-- #region slideshow={"slide_type": "subslide"} -->
+<img src="MBTA-stops.gv.png" width="650" height="650" />
+<!-- #endregion -->
 
 <!-- #region slideshow={"slide_type": "subslide"} -->
 Remark: we must interpret this *undirected* graph as a directed graph with source "Park St" and terminus "Downtown Crossing", as discussed before.
