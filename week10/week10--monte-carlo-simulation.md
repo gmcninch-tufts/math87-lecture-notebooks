@@ -92,7 +92,7 @@ For each day, we would like to keep track of various information:
 - does a customer arrive? (determined randomly)
 - is there a tank in stock? (ordering is determined by our strategy)
 
-So let's create a ``python`` data structure which keeps track of the required information. We'll just use a ``class`` named ``JFTE`` which has instance variables ``days``, ``stock``, ``sales`` etc.
+So let's create a ``python`` data structure which keeps track of the required information. We'll just use a ``class`` named ``JFTE`` which has instance variables ``customers``, ``stock``, ``sales`` etc.
   
 When we construct an instance of the class, we indicate the number of days ``N`` for our simulation. We create a list corresponding to ``days``, and the random number generated "decides" whether or not a customer will arrive on the given day.
 
@@ -127,35 +127,41 @@ class JFTE():
         self.sales = 0
         self.lost_sales = 0
         self.storage_days = 0
+        self.max_stock = 1
     
     def num_days(self):
         return len(self.customers)
     
     def add_stock(self):
         self.stock = self.stock + 1
+        if self.stock > self.max_stock:
+            self.max_stock = self.stock
     
     def sale(self):
         self.stock = self.stock - 1
         self.sales = self.sales + 1
         
     def result(self):
-        return result(self.num_days(),self.sales,self.lost_sales,self.storage_days)
+        return result(self.num_days(),self.sales,self.lost_sales,
+                      self.storage_days,self.max_stock)
 
 ```
 
 ```python slideshow={"slide_type": "subslide"}
 class result():
-    def __init__(self,num_days,sales,lost_sales,storage_days):
+    def __init__(self,num_days,sales,lost_sales,storage_days,max_stock):
         self.num_days = num_days
         self.sales = sales
         self.lost_sales = lost_sales
         self.storage_days = storage_days
+        self.max_stock = max_stock
 
     def report(self):
-        entries = [f"weeks:  {self.num_days/7.}",
+        entries = [f"weeks:        {self.num_days/7.}",
                    f"sales:        {self.sales}",
                    f"lost sales:   {self.lost_sales}",
                    f"storage_days: {self.storage_days}  (effective)",
+                   f"max stock:    {self.max_stock}",
                     ]
         return "\n".join(entries)
         
@@ -178,12 +184,11 @@ def stand_order(J,dow=6):
         c = J.customers[i]
         if dow == np.mod(i,7):
             J.add_stock()
-        if c>0 and J.stock > 0:
-            J.sale()
         if c>0 and J.stock == 0:
             J.lost_sales = J.lost_sales + 1
+        if c>0 and J.stock > 0:
+            J.sale()
         J.storage_days = J.storage_days + J.stock
-            
     return J.result()
 
 ```
@@ -199,10 +204,10 @@ def order_on_demand(J):
     order_wait = np.inf
 
     for c in J.customers:
-        if c>0 and J.stock>0:
-            J.sale()
         if c>0 and J.stock==0:
             J.lost_sales = J.lost_sales + 1
+        if c>0 and J.stock>0:
+            J.sale()
         J.storage_days = J.storage_days + J.stock
         if  order_wait == np.inf and J.stock==0:
             order_wait = 5
@@ -219,6 +224,7 @@ J = JFTE(2*52*7)
 
 J1 = stand_order(J,dow=6)
 J2 = order_on_demand(J)
+
 ```
 
 ```python slideshow={"slide_type": "fragment"}
@@ -240,9 +246,11 @@ def report_trials(JL):
     rdict = {"sales       - standing":list(map(lambda x:x.sales,     JS)),
              "lost sales  - standing":list(map(lambda x:x.lost_sales,JS)),
              "storage_days- standing":list(map(lambda x:x.storage_days,JS)),
+             "max stock   - standing":list(map(lambda x:x.max_stock,JS)),
              "sales       - demand":  list(map(lambda x:x.sales,     JD)),
              "lost sales  - demand":  list(map(lambda x:x.lost_sales,JD)),
-             "storage_days- demand":  list(map(lambda x:x.storage_days,JD))               
+             "storage_days- demand":  list(map(lambda x:x.storage_days,JD)),
+             "max stock   - demand":list(map(lambda x:x.max_stock,JD))
               }
     return pd.DataFrame(rdict)
 ```
