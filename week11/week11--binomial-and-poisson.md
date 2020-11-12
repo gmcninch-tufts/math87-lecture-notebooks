@@ -24,6 +24,7 @@ Course material (Week 11): Binomial & Poisson distributions
 ----------------------------------------------------------------
 <!-- #endregion -->
 
+<!-- #region slideshow={"slide_type": "slide"} -->
 Intro
 =====
 
@@ -33,8 +34,9 @@ In this notebook, we are going to talk about more sophisticated probabilistic de
 
 We'll start by discussing the JFTE example.
 
+<!-- #endregion -->
 
-<!-- #region -->
+<!-- #region slideshow={"slide_type": "slide"} -->
 JFTE, revisited
 ================
 
@@ -54,6 +56,11 @@ the probability of seeing 0, 1 or 2 customers in a day is given by the following
 | 1            | $\dfrac{2 \cdot 13}{14 \cdot 14}$   |
 | 2            | $\dfrac{1}{14 \cdot 14}$ |
 
+
+
+<!-- #endregion -->
+
+<!-- #region slideshow={"slide_type": "subslide"} -->
 
 Let's compute the *expected value* for the random variable $A$ representing "number of customers arriving in a day":
 
@@ -75,14 +82,19 @@ with probabilty
 
 $$(p_4)^4 = \dfrac{1}{28^4}$$
 
+
+
+<!-- #endregion -->
+
+<!-- #region slideshow={"slide_type": "subslide"} -->
+
 With what probability do we see 3 customers? Well, this situation will correspond to the arrival of a customer in all but one of the shifts. Now, the probability of having a customer in each shift except (say) the morning shift is
 
-$$p_4 \cdot (1-p_4)^3 = \dfrac{1}{28} \cdot \left(\dfrac{27}{28}\right)^3$$
+$$p_4^3 \cdot (1-p_4) = \dfrac{1}{28^3} \cdot \left(\dfrac{27}{28}\right)$$
 
 Thus the probability of having exactly 3 customers arrive in a day is
 
-$$4 \cdot p_r \cdot (1-p_r)^3$$
-
+$$4 \cdot (p_4)^3 \cdot (1-p_4)$$
 <!-- #endregion -->
 
 <!-- #region slideshow={"slide_type": "slide"} -->
@@ -104,6 +116,7 @@ For example, since $\dbinom{4}{2} = 6$ and $\dbinom{4}{3} = 4$, we have
 $$(X+Y)^4 = X^4 + 4 X^3Y  + 6 X^2Y^2 + 4 X Y^3 + Y^4$$
 <!-- #endregion -->
 
+<!-- #region slideshow={"slide_type": "subslide"} -->
 Return to example:
 ==================
 
@@ -120,6 +133,7 @@ $[1,0,0,1,0]$
 represents the outcome "a customer arrived in the first and fourth shifts, and no customers arrived in the remaining shifts".
 
 
+<!-- #endregion -->
 
 <!-- #region slideshow={"slide_type": "subslide"} -->
 
@@ -160,6 +174,11 @@ $$(\diamondsuit) \quad nY(X+Y)^{n-1} = \sum_{m=0}^n m\dbinom{n}{m}X^{n-m}Y^m$$
 
 
 
+<!-- #endregion -->
+
+<!-- #region slideshow={"slide_type": "subslide"} -->
+
+
 For $n$ shifts in a day, use $(\clubsuit)$ to see that the expected value for the number of customers arriving in a day is given by
 
 $$E(A) = \sum_{i=0}^n i \cdot \dbinom{n}{i} (p_n)^i (1-p_n)^{n-i}$$
@@ -185,10 +204,10 @@ is given by the formula
 
 $$P(X_n = m) = \dbinom{n}{m} p^m (1-p)^{n-m}.$$
 
-
 <!-- #endregion -->
 
 <!-- #region slideshow={"slide_type": "subslide"} -->
+
 A good example of the binomial distribution arises when $B$ is the toss of a fair coin -- so that $p = \dfrac{1}{2}$. In this case, the value of $X_n$ reflects (say) the number of heads in a trial of $n$ coin tosses.
 
 Such a binomial distribution is not *quite* the same as our customer arrival example, though. In our case, the probability of customer arrival depends on the number $n$ of "trials" (or rather, "shifts").
@@ -218,11 +237,11 @@ $$= \lim_{n \to \infty} \dbinom{n}{m}\left(\dfrac{p}{n}\right)^m \left(1-\dfrac{
 
 where
 
-$$A= \lim_{n \to \infty} \dbinom{n}{m} \cdot \left(\dfrac{p}{n}\right)^m$$ 
-
-$$B= \lim_{n \to \infty} \left(1-\dfrac{p}{n}\right)^n$$
-
-$$C= \lim_{n \to \infty} \left(1-\dfrac{p}{n}\right)^{-m}$$
+$$A= \lim_{n \to \infty} \dbinom{n}{m} \cdot \left(\dfrac{p}{n}\right)^m 
+\quad \text{and} \quad 
+B= \lim_{n \to \infty} \left(1-\dfrac{p}{n}\right)^n
+\quad \text{and} \quad
+C= \lim_{n \to \infty} \left(1-\dfrac{p}{n}\right)^{-m}$$
 
 -------------------------------
 
@@ -292,6 +311,7 @@ $$ = \sum_{m \ge 0} m \dfrac{p^m e^{-p}}{m!} = pe^pe^{-p} = p.$$
 
 <!-- #endregion -->
 
+<!-- #region slideshow={"slide_type": "slide"} -->
 Return to JFTE
 ==============
 
@@ -310,8 +330,9 @@ abilities of independent events, such as the arrival of customers.
 
 - The first practical application was due to Ladislaus Bortkiewicz. In 1898, he investigated
 the number of soldiers in the Prussian army who died each year from being kicked by a horse. Poisson distributions are ideal for modeling events that have a really low probability of occurring, but many opportunities to occur.
+<!-- #endregion -->
 
-
+<!-- #region slideshow={"slide_type": "slide"} -->
 Implementation
 ===============
 
@@ -319,8 +340,9 @@ How can we use the Poisson distribution in practice? e.g. with our JFTE simulati
 
 Let's compute the probabilities for $m = 0,1,2,...$ for customer arrival, as before:
 
+<!-- #endregion -->
 
-```python
+```python slideshow={"slide_type": "fragment"}
 import numpy as np
 
 def poisson(p,m):
@@ -329,6 +351,7 @@ def poisson(p,m):
 print("\n".join([f"m = {m} -- q_{m+1} = P(X={m}) = {poisson(1./7,m):.8f}" for m in range(6)]))
 ```
 
+<!-- #region slideshow={"slide_type": "subslide"} -->
 We now consider the consecutive intervals
 
 $$I_0=[0=q_0,q_1), \quad I_1=[q_1,q_1+q_2), \quad I_2=[q_1+q_2,q_1+q_2+q_3), \quad 
@@ -342,8 +365,9 @@ Thus $X=m$ if and only if $$\sum_{i=1}^m q_i \le r < \sum_{i=1}^{m+1} q_i$$
 We'll write a ``python`` function which takes as parameter the base probability $p$, and a specified "maximum number of customers" ``N``. The function computes $q_0,q_1,\cdots,q_N$,
 gets a random real number $r$ in $[0,1]$ and determines which subinterval $I_m$ contains $r$,
 where for $m<N$ the interval $I_m$ is as before, and where the $N$th subinterval is defined to be $$I_N = \left[\sum_{i=1}^N q_i,1\right].$$
+<!-- #endregion -->
 
-```python
+```python slideshow={"slide_type": "subslide"}
 from numpy.random import default_rng
 
 rng=default_rng()
@@ -368,123 +392,60 @@ def arrival(p,num_max):
     
 ```
 
-```python slideshow={"slide_type": "subslide"}
+<!-- #region slideshow={"slide_type": "subslide"} -->
 
-def customer(prob=1./7):
-    return rng.choice([1,0],p=[prob,1-prob])
+The function ``arrival`` just introduced makes it possible to simulate customer arrival using the Poisson distribution.
 
-
-class JFTE():
-    def __init__(self,N,prob=1./7):
-        self.customers = []
-        for i in range(N):
-            self.customers.append(arrival(prob,5))
-        self.reset()
-    
-    def reset(self):
-        self.stock = 1
-        self.sales = 0
-        self.lost_sales = 0
-        self.storage_days = 0
-        self.max_stock = 1
-    
-    def num_days(self):
-        return len(self.customers)
-    
-    def add_stock(self):
-        self.stock = self.stock + 1
-        if self.stock > self.max_stock:
-            self.max_stock = self.stock
-    
-    def sale(self):
-        self.stock = self.stock - 1
-        self.sales = self.sales + 1
-        
-    def result(self):
-        return result(self.num_days(),self.sales,self.lost_sales,
-                      self.storage_days,self.max_stock)
+For example, to create a list containing a simulation of 6 months worth of customer arrival data with probability ``p=1/7``, allowing no more than 10 customers per day, proceed as follows:
 
 ```
-
-```python
-J=JFTE(2*52*7)
+customers = [arrival(1./7,10) for n in range(6*4*7)]
 ```
 
-```python slideshow={"slide_type": "subslide"}
-class result():
-    def __init__(self,num_days,sales,lost_sales,storage_days,max_stock):
-        self.num_days = num_days
-        self.sales = sales
-        self.lost_sales = lost_sales
-        self.storage_days = storage_days
-        self.max_stock = max_stock
+or equivalently
+```
+customers = []
+for n in range(6*4*7):
+  customers.append(arrival(1./7,10))
+```
 
-    def report(self):
-        entries = [f"weeks:        {self.num_days/7.}",
-                   f"sales:        {self.sales}",
-                   f"lost sales:   {self.lost_sales}",
-                   f"storage_days: {self.storage_days}  (effective)",
-                   f"max stock:    {self.max_stock}",
-                    ]
-        return "\n".join(entries)
-        
+<!-- #endregion -->
+
+```python slideshow={"slide_type": "fragment"}
+customers_1 = [arrival(1./7,10) for n in range(6*4*7)]
+
+customers_2 = []
+for n in range(6*4*7):
+  customers_2.append(arrival(1./7,10))
+```
+
+<!-- #region slideshow={"slide_type": "subslide"} -->
+If you inspect the lists ``customers_1`` or ``customers_2`` from the preceding cell, you should
+see that the lists mainly -- perhaps even exclusively -- contain the entries ``0`` and ``1``.
+
+To make larger numbers of customer arrivals likely to appear in our arrival data, we need to wait longer!!
+
+Let's use a ``pandas`` DataFrame to keep track of the frequency of customer counts:
+<!-- #endregion -->
+
+```python slideshow={"slide_type": "subslide"}
+import pandas as pd
+
+def get_customers(p,N):
+    return [arrival(p,10) for n in range(N)]
+
+year = 52*7
+
+data = pd.DataFrame(get_customers(1./7,10*year))
+data.value_counts()
 ```
 
 ```python slideshow={"slide_type": "fragment"}
-def stand_order(J,dow=6):
-    ## dow = arrival day-of-week for standing order; should be in [0,1,2,3,4,5,6]
-    ## we'll assume that the first day of the ``days`` list is dow=0.
-    
-    N = J.num_days()
-    J.reset()
-    
-    for i in range(N):
-        c = J.customers[i]
-        if dow == np.mod(i,7):
-            J.add_stock()
-        if c>0 and J.stock == 0:
-            J.lost_sales = J.lost_sales + 1
-        if c>0 and J.stock > 0:
-            J.sale()
-        J.storage_days = J.storage_days + J.stock
-    return J.result()
-
-```
-
-```python
-RR=stand_order(J)
-print(RR.report())
+pd.DataFrame(get_customers(1./7,100*year)).value_counts()
 ```
 
 ```python slideshow={"slide_type": "fragment"}
-            
-def order_on_demand(J):
-    J.reset()
-    order_wait = np.inf
-
-    for c in J.customers:
-        if c>0 and J.stock==0:
-            J.lost_sales = J.lost_sales + 1
-        if c>0 and J.stock>0:
-            J.sale()
-        J.storage_days = J.storage_days + J.stock
-        if  order_wait == np.inf and J.stock==0:
-            order_wait = 5
-        if order_wait == 0:
-            J.add_stock()
-            order_wait = np.inf
-        if order_wait>0:
-            order_wait = order_wait - 1
-    return J.result()
-```
-
-```python
-RD=order_on_demand(J)
-print(RD.report())
-```
-
-```python
-J.customers
+pd.DataFrame(get_customers(1./7,1000*year)).value_counts()
 ```
 
 ```python
