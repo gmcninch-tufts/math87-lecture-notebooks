@@ -198,16 +198,15 @@ The second strategy is to have a order placed as soon as a sale is made.
 <!-- #endregion -->
 
 ```python slideshow={"slide_type": "fragment"}
-            
 def order_on_demand(J):
     J.reset()
     order_wait = np.inf
-
     for c in J.customers:
         if c>0 and J.stock==0:
             J.lost_sales = J.lost_sales + 1
         if c>0 and J.stock>0:
             J.sale()
+            
         J.storage_days = J.storage_days + J.stock
         if  order_wait == np.inf and J.stock==0:
             order_wait = 5
@@ -217,6 +216,7 @@ def order_on_demand(J):
         if order_wait>0:
             order_wait = order_wait - 1
     return J.result()
+
 ```
 
 ```python slideshow={"slide_type": "slide"}
