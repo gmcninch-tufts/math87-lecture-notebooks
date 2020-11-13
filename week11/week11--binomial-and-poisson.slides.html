@@ -13512,6 +13512,45 @@ m = 5 -- q_6 = P(X=5) = 0.00000043
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Addendum">Addendum<a class="anchor-link" href="#Addendum">&#182;</a></h1><p>We want to simulate arrival of customers according to the Poisson distribution. 
+In fact, we only approximate this, because while the Poisson distribution allows for any number of customers, our simulation is going to impose an upper bound on the number.</p>
+<p>So: we desire a <code>python</code> function which takes as arguments <code>p</code> the base probability of an event and <code>M</code> the maximum number of  events to consider.</p>
+<p>In our case we are modeling customer arrivals, so we'll call this function <code>arrival</code>. Our function will compute the first <code>M-1</code> probabilities <code>q0,q1,...,q{M-1}</code> for the Poisson distribution.
+We then set <code>qM</code> to be <code>1 - q0 - q1 - ...</code></p>
+
+<pre><code>def arrival(p=1./7,M = 10,rng=default_rng()):
+    qq = list(map(lambda m:poisson(p,m),range(M)))
+    qq = qq + [1-sum(qq,0)]
+
+    return rng.choose(range(M+1),p=qq)</code></pre>
+
+</div>
+</div>
+</div><div class="fragment">
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">default_rng</span>
+<span class="n">rng</span><span class="o">=</span><span class="n">default_rng</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">arrival</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">1.</span><span class="o">/</span><span class="mi">7</span><span class="p">,</span><span class="n">M</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span><span class="n">rng</span><span class="o">=</span><span class="n">default_rng</span><span class="p">()):</span>
+    <span class="n">qq</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">:</span><span class="n">poisson</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">m</span><span class="p">),</span><span class="nb">range</span><span class="p">(</span><span class="n">M</span><span class="p">)))</span>
+    <span class="n">qq</span> <span class="o">=</span> <span class="n">qq</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="nb">sum</span><span class="p">(</span><span class="n">qq</span><span class="p">,</span><span class="mi">0</span><span class="p">)]</span>
+    
+    <span class="k">return</span> <span class="n">rng</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">M</span><span class="o">+</span><span class="mi">1</span><span class="p">)),</span><span class="n">p</span><span class="o">=</span><span class="n">qq</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div></div></section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Another-construction">Another construction<a class="anchor-link" href="#Another-construction">&#182;</a></h1><p><em>Originally, I used the following alternative construction for the function <code>arrival</code>. It is slightly more complicated, but I'll leave it here for reference.</em></p>
 <p>We now consider the consecutive intervals</p>
 $$I_0=[0=q_0,q_1), \quad I_1=[q_1,q_1+q_2), \quad I_2=[q_1+q_2,q_1+q_2+q_3), \quad 
 \cdots$$<p>We simulate a value of $X$ by choosing a  random number $0 &lt; r &lt; 1$; we then find the value of $m$ such that
@@ -13526,7 +13565,7 @@ where for $m&lt;N$ the interval $I_m$ is as before, and where the $N$th subinter
 </div></section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">default_rng</span>
@@ -13536,20 +13575,20 @@ where for $m&lt;N$ the interval $I_m$ is as before, and where the $N$th subinter
 <span class="k">def</span> <span class="nf">partial_sum</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">i</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span><span class="p">],</span><span class="mi">0</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">arrival</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">num_max</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">arrival_alt</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">1.7</span><span class="p">,</span><span class="n">M</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">rng</span><span class="o">=</span><span class="n">default_rng</span><span class="p">()):</span>
     <span class="c1">## make a list of the values q_i </span>
-    <span class="n">qq</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">:</span><span class="n">poisson</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">m</span><span class="p">),</span><span class="nb">range</span><span class="p">(</span><span class="n">num_max</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
+    <span class="n">qq</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">:</span><span class="n">poisson</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">m</span><span class="p">),</span><span class="nb">range</span><span class="p">(</span><span class="n">M</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
     
     <span class="c1">## find the &quot;partial sums&quot; of the list qq</span>
-    <span class="n">pq</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">:</span><span class="n">partial_sum</span><span class="p">(</span><span class="n">qq</span><span class="p">,</span><span class="n">m</span><span class="p">),</span><span class="nb">range</span><span class="p">(</span><span class="n">num_max</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
+    <span class="n">pq</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">:</span><span class="n">partial_sum</span><span class="p">(</span><span class="n">qq</span><span class="p">,</span><span class="n">m</span><span class="p">),</span><span class="nb">range</span><span class="p">(</span><span class="n">M</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
     
     <span class="n">r</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
     
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_max</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">M</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">pq</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]:</span>
             <span class="k">return</span> <span class="n">i</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">num_max</span>
+        <span class="k">return</span> <span class="n">M</span>
     
 </pre></div>
 
@@ -13561,29 +13600,30 @@ where for $m&lt;N$ the interval $I_m$ is as before, and where the $N$th subinter
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The function <code>arrival</code> just introduced makes it possible to simulate customer arrival using the Poisson distribution.</p>
+<hr>
+<p>The function <code>arrival</code> <em>(or <code>arrival_alt</code>)</em> just introduced makes it possible to simulate customer arrival using the Poisson distribution.</p>
 <p>For example, to create a list containing a simulation of 6 months worth of customer arrival data with probability <code>p=1/7</code>, allowing no more than 10 customers per day, proceed as follows:</p>
 
-<pre><code>customers = [arrival(1./7,10) for n in range(6*4*7)]</code></pre>
+<pre><code>customers = [arrival(p=1./7,M=10) for n in range(6*4*7)]</code></pre>
 <p>or equivalently</p>
 
 <pre><code>customers = []
 for n in range(6*4*7):
-  customers.append(arrival(1./7,10))</code></pre>
+  customers.append(arrival(p=1./7,M=10))</code></pre>
 
 </div>
 </div>
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">customers_1</span> <span class="o">=</span> <span class="p">[</span><span class="n">arrival</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mi">7</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="o">*</span><span class="mi">4</span><span class="o">*</span><span class="mi">7</span><span class="p">)]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">customers_1</span> <span class="o">=</span> <span class="p">[</span><span class="n">arrival</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">1.</span><span class="o">/</span><span class="mi">7</span><span class="p">,</span><span class="n">M</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="o">*</span><span class="mi">4</span><span class="o">*</span><span class="mi">7</span><span class="p">)]</span>
 
 <span class="n">customers_2</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="o">*</span><span class="mi">4</span><span class="o">*</span><span class="mi">7</span><span class="p">):</span>
-  <span class="n">customers_2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arrival</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mi">7</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+  <span class="n">customers_2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arrival</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">1.</span><span class="o">/</span><span class="mi">7</span><span class="p">,</span><span class="n">M</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -13604,7 +13644,7 @@ see that the lists mainly -- perhaps even exclusively -- contain the entries <co
 </div></section><section>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[33]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -13628,16 +13668,16 @@ see that the lists mainly -- perhaps even exclusively -- contain the entries <co
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[33]:</div>
+    <div class="prompt output_prompt">Out[5]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>0    3157
-1     445
-2      34
-3       4
+<pre>0    3162
+1     447
+2      30
+3       1
 dtype: int64</pre>
 </div>
 
@@ -13649,10 +13689,11 @@ dtype: int64</pre>
 </div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[37]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">get_customers</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mi">7</span><span class="p">,</span><span class="mi">100</span><span class="o">*</span><span class="n">year</span><span class="p">))</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## values for 100 years</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">get_customers</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mi">7</span><span class="p">,</span><span class="mi">100</span><span class="o">*</span><span class="n">year</span><span class="p">))</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
 </pre></div>
 
     </div>
@@ -13665,16 +13706,16 @@ dtype: int64</pre>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[37]:</div>
+    <div class="prompt output_prompt">Out[6]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>0    31455
-1     4594
-2      330
-3       21
+<pre>0    31679
+1     4390
+2      317
+3       14
 dtype: int64</pre>
 </div>
 
@@ -13686,10 +13727,11 @@ dtype: int64</pre>
 </div></div><div class="fragment">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[38]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">get_customers</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mi">7</span><span class="p">,</span><span class="mi">1000</span><span class="o">*</span><span class="n">year</span><span class="p">))</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## values for 1,000 years</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">get_customers</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mi">7</span><span class="p">,</span><span class="mi">1000</span><span class="o">*</span><span class="n">year</span><span class="p">))</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
 </pre></div>
 
     </div>
@@ -13702,17 +13744,17 @@ dtype: int64</pre>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[38]:</div>
+    <div class="prompt output_prompt">Out[8]:</div>
 
 
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>0    315989
-1     44681
-2      3170
-3       151
-4         9
+<pre>0    315320
+1     45340
+2      3181
+3       155
+4         4
 dtype: int64</pre>
 </div>
 

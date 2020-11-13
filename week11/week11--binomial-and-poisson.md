@@ -352,6 +352,43 @@ print("\n".join([f"m = {m} -- q_{m+1} = P(X={m}) = {poisson(1./7,m):.8f}" for m 
 ```
 
 <!-- #region slideshow={"slide_type": "subslide"} -->
+Addendum
+========
+
+We want to simulate arrival of customers according to the Poisson distribution. 
+In fact, we only approximate this, because while the Poisson distribution allows for any number of customers, our simulation is going to impose an upper bound on the number.
+
+So: we desire a ``python`` function which takes as arguments ``p`` the base probability of an event and ``M`` the maximum number of  events to consider.
+
+In our case we are modeling customer arrivals, so we'll call this function ``arrival``. Our function will compute the first ``M-1`` probabilities ``q0,q1,...,q{M-1}`` for the Poisson distribution.
+We then set ``qM`` to be ``1 - q0 - q1 - ...``
+
+```
+def arrival(p=1./7,M = 10,rng=default_rng()):
+    qq = list(map(lambda m:poisson(p,m),range(M)))
+    qq = qq + [1-sum(qq,0)]
+    
+    return rng.choose(range(M+1),p=qq)
+```
+<!-- #endregion -->
+
+```python slideshow={"slide_type": "fragment"}
+from numpy.random import default_rng
+rng=default_rng()
+
+def arrival(p=1./7,M = 10,rng=default_rng()):
+    qq = list(map(lambda m:poisson(p,m),range(M)))
+    qq = qq + [1-sum(qq,0)]
+    
+    return rng.choice(list(range(M+1)),p=qq)
+```
+
+<!-- #region slideshow={"slide_type": "subslide"} -->
+Another construction
+====================
+
+*Originally, I used the following alternative construction for the function ``arrival``. It is slightly more complicated, but I'll leave it here for reference.*
+
 We now consider the consecutive intervals
 
 $$I_0=[0=q_0,q_1), \quad I_1=[q_1,q_1+q_2), \quad I_2=[q_1+q_2,q_1+q_2+q_3), \quad 
@@ -375,48 +412,49 @@ rng=default_rng()
 def partial_sum(l,i):
     return sum(l[0:i],0)
 
-def arrival(p,num_max):
+def arrival_alt(p=1.7,M=10,rng=default_rng()):
     ## make a list of the values q_i 
-    qq = list(map(lambda m:poisson(p,m),range(num_max+1)))
+    qq = list(map(lambda m:poisson(p,m),range(M+1)))
     
     ## find the "partial sums" of the list qq
-    pq = list(map(lambda m:partial_sum(qq,m),range(num_max+1)))
+    pq = list(map(lambda m:partial_sum(qq,m),range(M+1)))
     
     r = rng.random()
     
-    for i in range(num_max):
+    for i in range(M):
         if r < pq[i+1]:
             return i
     else:
-        return num_max
+        return M
     
 ```
 
 <!-- #region slideshow={"slide_type": "subslide"} -->
+-------------------------
 
-The function ``arrival`` just introduced makes it possible to simulate customer arrival using the Poisson distribution.
+The function ``arrival`` *(or ``arrival_alt``)* just introduced makes it possible to simulate customer arrival using the Poisson distribution.
 
 For example, to create a list containing a simulation of 6 months worth of customer arrival data with probability ``p=1/7``, allowing no more than 10 customers per day, proceed as follows:
 
 ```
-customers = [arrival(1./7,10) for n in range(6*4*7)]
+customers = [arrival(p=1./7,M=10) for n in range(6*4*7)]
 ```
 
 or equivalently
 ```
 customers = []
 for n in range(6*4*7):
-  customers.append(arrival(1./7,10))
+  customers.append(arrival(p=1./7,M=10))
 ```
 
 <!-- #endregion -->
 
 ```python slideshow={"slide_type": "fragment"}
-customers_1 = [arrival(1./7,10) for n in range(6*4*7)]
+customers_1 = [arrival(p=1./7,M=10) for n in range(6*4*7)]
 
 customers_2 = []
 for n in range(6*4*7):
-  customers_2.append(arrival(1./7,10))
+  customers_2.append(arrival(p=1./7,M=10))
 ```
 
 <!-- #region slideshow={"slide_type": "subslide"} -->
@@ -441,10 +479,12 @@ data.value_counts()
 ```
 
 ```python slideshow={"slide_type": "fragment"}
+## values for 100 years
 pd.DataFrame(get_customers(1./7,100*year)).value_counts()
 ```
 
 ```python slideshow={"slide_type": "fragment"}
+## values for 1,000 years
 pd.DataFrame(get_customers(1./7,1000*year)).value_counts()
 ```
 
